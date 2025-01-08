@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   getTeamData,
   updateTeamData,
-} = require("../controllers/teamData.controller");
+} = require("../controllers/teamDataController");
 
 
   router.get("/api/v1/getTeams", getTeamData);

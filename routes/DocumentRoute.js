@@ -6,7 +6,7 @@ const {
   getStatusRequestForAgent,
   sendPolicyPdf,
   CustomerApproval,
-} = require("../controllers/document.controller");
+} = require("../controllers/documentController");
 
 router.patch("/document-status-update", updateDocumentStatus);
 router.patch("/customer-document-approval", sendPolicyPdf); // send by admin

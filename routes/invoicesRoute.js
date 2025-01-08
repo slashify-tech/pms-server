@@ -8,7 +8,7 @@ const {
   getInvoicesByStatus,
   invoiceById,
   invoiceResubmit,
-} = require('../controllers/invoice.Controller');
+} = require('../controllers/invoiceController');
 
 // Define routes
 router.post('/add-invoice', addInvoice);

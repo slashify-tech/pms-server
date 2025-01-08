@@ -5,13 +5,13 @@ const helmet = require("helmet");
 const dotenv = require("dotenv");
 const cron = require('node-cron');
 const Policy = require('./model/Policies')
-const invoiceRoutes = require('./routes/invoices.route.js'); 
-const adminRoutes = require('./routes/admin.route.js'); 
-const documentRoutes = require('./routes/Document.route.js'); 
-const policyRoutes = require('./routes/policy.route.js'); 
-const teamRoutes = require('./routes/Teams.route.js'); 
-const userRoutes = require('./routes/user.route.js'); 
-const vehicleRoutes = require('./routes/vehicleData.route.js'); 
+const invoiceRoutes = require('./routes/invoicesRoute.js'); 
+const adminRoutes = require('./routes/adminRoute.js'); 
+const documentRoutes = require('./routes/DocumentRoute.js'); 
+const policyRoutes = require('./routes/policyRoute.js'); 
+const teamRoutes = require('./routes/TeamsRoute.js'); 
+const userRoutes = require('./routes/userRoute.js'); 
+const vehicleRoutes = require('./routes/vehicleDataRoute.js'); 
 
 
 const connectDb = require('./db/mongoConnection');
