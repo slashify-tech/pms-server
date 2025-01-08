@@ -13,7 +13,7 @@ const {
   agentCancelledPolicy,
 } = require("../helper/emailFunction");
 const { getNextPolicyId } = require("../helper/countreunvtion");
-const Teams = require("../model/Teams.model");
+const Teams = require("../model/TeamsModel");
 
 exports.policyFormData = async (req, res) => {
   try {

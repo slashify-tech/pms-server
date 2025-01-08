@@ -1,5 +1,5 @@
 const { findByIdAndUpdate } = require("../model/policyCounter");
-const Teams = require("../model/Teams.model");
+const Teams = require("../model/TeamsModel");
 
 
 exports.getTeamData = async (req, res) => { 

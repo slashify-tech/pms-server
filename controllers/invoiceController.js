@@ -1,6 +1,6 @@
 const { invoiceApproved, invoiceRejected } = require("../helper/emailFunction");
-const Invoice = require("../model/invoice.model");
-const InvoiceCounter = require("../model/InvoiceCounter.model");
+const Invoice = require("../model/InvoiceModel");
+const InvoiceCounter = require("../model/InvoiceCounterModel");
 
 exports.addInvoice = async (req, res) => {
   const { email, ...payload } = req.body;

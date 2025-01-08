@@ -9,8 +9,8 @@ const {
   renderEmailTemplate,
   renderEmailInvoiceTemplate,
 } = require("../helper/pdfDownlaod");
-const DocumentStatus = require("../model/DocumentStatus.model");
-const Invoice = require("../model/invoice.model");
+const DocumentStatus = require("../model/DocumentStatusModel");
+const Invoice = require("../model/InvoiceModel");
 const Policy = require("../model/Policies");
 const User = require("../model/User");
 
