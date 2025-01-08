@@ -1,19 +1,23 @@
-const { addInvoice, editInvoice, getAllInvoice, invoiceApproval, getInvoicesByStatus, invoiceById, invoiceResubmit } = require("../controllers/invoice.Controller")
+const express = require('express');
+const router = express.Router();
+const {
+  addInvoice,
+  editInvoice,
+  getAllInvoice,
+  invoiceApproval,
+  getInvoicesByStatus,
+  invoiceById,
+  invoiceResubmit,
+} = require('../controllers/invoice.Controller');
 
+// Define routes
+router.post('/add-invoice', addInvoice);
+router.patch('/update-invoice', editInvoice);
+router.patch('/update-approval', invoiceApproval);
+router.get('/all-invoice-approval', getAllInvoice);
+router.get('/invoice-all', getInvoicesByStatus);
+router.get('/invoice', invoiceById);
+router.patch('/invoice-resubmit', invoiceResubmit);
 
-
-module.exports = (app) =>{
-    app.post('/api/v1/add-invoice', addInvoice);
-    app.patch('/api/v1/update-invoice', editInvoice);
-    app.patch('/api/v1/update-approval', invoiceApproval);
-    app.get('/api/v1/all-invoice-approval', getAllInvoice);
-    app.get('/api/v1/invoice-all', getInvoicesByStatus);
-    app.get('/api/v1/invoice', invoiceById);
-    app.patch('/api/v1/invoice-resubmit', invoiceResubmit);
-    
-
-
-
-    
-
-}
+// Export the router
+module.exports = router;

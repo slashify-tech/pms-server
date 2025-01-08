@@ -1,9 +1,11 @@
+const express = require('express');
+const router = express.Router();
 const {
   getTeamData,
   updateTeamData,
 } = require("../controllers/teamData.controller");
 
-module.exports = (app) => {
-  app.get("/api/v1/getTeams", getTeamData);
-  app.patch("/api/v1/update-team", updateTeamData);
-};
+
+  router.get("/api/v1/getTeams", getTeamData);
+  router.patch("/api/v1/update-team", updateTeamData);
+  module.exports = router;

@@ -1,15 +1,20 @@
-const { getDocumentData, updateDocumentStatus, getStatusRequestForAgent, sendPolicyPdf, CustomerApproval } = require("../controllers/document.controller")
+const express = require('express');
+const router = express.Router();
+const {
+  getDocumentData,
+  updateDocumentStatus,
+  getStatusRequestForAgent,
+  sendPolicyPdf,
+  CustomerApproval,
+} = require("../controllers/document.controller");
 
+router.patch("/document-status-update", updateDocumentStatus);
+router.patch("/customer-document-approval", sendPolicyPdf); // send by admin
 
+router.patch("/customer-approval", CustomerApproval); //approved by customer
 
-module.exports = (app)=>{
-    app.patch('/api/v1/document-status-update', updateDocumentStatus)
-    app.patch('/api/v1/customer-document-approval', sendPolicyPdf) // send by admin
-    app.patch('/api/v1/customer-approval', CustomerApproval) //approved by customer
+router.get("/all-document", getDocumentData);
 
-    app.get('/api/v1/all-document', getDocumentData)
-    app.get('/api/v1/agent-document-approval', getStatusRequestForAgent)
+router.get("/agent-document-approval", getStatusRequestForAgent);
 
-
-
-}
+module.exports = router;

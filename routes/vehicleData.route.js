@@ -1,6 +1,9 @@
+const express = require('express');
+const router = express.Router();
 const { getMbOptions, getMgOptions } = require("../controllers/PoliciesController");
 
-module.exports = (app) => {
-  app.get("/api/v1/mgOptions", getMgOptions);
-  app.get("/api/v1/mbOptions", getMbOptions);
-};
+
+router.get("/mgOptions", getMgOptions);
+router.get("/mbOptions", getMbOptions);
+
+module.exports = router;

@@ -5,8 +5,15 @@ const helmet = require("helmet");
 const dotenv = require("dotenv");
 const cron = require('node-cron');
 const Policy = require('./model/Policies')
-let router = express.Router();
-const { initializeRoutes } = require('./routes/index');
+const invoiceRoutes = require('./routes/invoices.route.js'); 
+const adminRoutes = require('./routes/admin.route.js'); 
+const documentRoutes = require('./routes/Document.route.js'); 
+const policyRoutes = require('./routes/policy.route.js'); 
+const teamRoutes = require('./routes/Teams.route.js'); 
+const userRoutes = require('./routes/user.route.js'); 
+const vehicleRoutes = require('./routes/vehicleData.route.js'); 
+
+
 const connectDb = require('./db/mongoConnection');
 http = require("http");
 
@@ -59,10 +66,15 @@ async function startServer() {
     app.use(morgan("common"));
     app.use(cors());
 
-    initializeRoutes(app);
     const server = http.createServer(app);
-    app.use(router);
-  
+    app.use('/api/v1/', invoiceRoutes);
+    app.use('/api/v1/', adminRoutes);
+    app.use('/api/v1/', documentRoutes);
+    app.use('/api/v1/', vehicleRoutes);
+    app.use('/api/v1/', policyRoutes);
+    app.use('/api/v1/', userRoutes);
+    app.use('/api/v1/', teamRoutes);
+
     app.use("/running-status", (req, res) => {
       res.status(200).send("API is connected");
     });

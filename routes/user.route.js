@@ -1,13 +1,18 @@
+const express = require("express");
+const router = express.Router();
 const { cancelFromAgentRequest } = require("../controllers/PoliciesController");
-const { signinController, getUsersData, getUserById, getUserDataById} = require("../controllers/UserController");
+const {
+  signinController,
+  getUsersData,
+  getUserById,
+  getUserDataById,
+} = require("../controllers/UserController");
 const { authCheck } = require("../middleware/Auth");
 
-module.exports = (app)=>{
-    app.post("/api/v1/auth", signinController);
-    app.put("/api/v1/cancel-request/:id", cancelFromAgentRequest)
+router.post("/auth", signinController);
+router.put("/cancel-request/:id", cancelFromAgentRequest);
 
-    app.get("/api/v1/getUserData", authCheck, getUsersData)
-    app.get("/api/v1/getUserDataById/:userId", getUserById)
-    app.get("/api/v1/getAllUserDataById/:userId", getUserDataById)
-
-}
+router.get("/getUserData", authCheck, getUsersData);
+router.get("/getUserDataById/:userId", getUserById);
+router.get("/getAllUserDataById/:userId", getUserDataById);
+module.exports = router;
