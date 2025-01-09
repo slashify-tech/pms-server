@@ -327,8 +327,8 @@ exports.sendPolicyPdf = async (req, res) => {
       // Generate HTML and PDF
       const policyHtml = await renderEmailTemplate(policy);
       const invoiceHtml = await renderEmailInvoiceTemplate(invoice);
-      const pdfPolicyBuffer = await generatePdf(policyHtml);
-      const pdfInvoiceBuffer = await generatePdf(invoiceHtml);
+      const pdfPolicyBuffer = await generatePdf(policyHtml, "pdfPolicy");
+      const pdfInvoiceBuffer = await generatePdf(invoiceHtml, "pdfInvoice");
       const policyFilename = `${policy.policyId}_${
         policy.customerName || "Policy"
       }.pdf`;

@@ -48,7 +48,7 @@ const renderEmailInvoiceTemplate = async (data) => {
     throw error;
   }
 };
-const generatePdf = async (html) => {
+const generatePdf = async (html, pdfType) => {
   let browser;
   try {
     // Launch Puppeteer with error-resilient options
@@ -68,12 +68,21 @@ const generatePdf = async (html) => {
 
     // Set the HTML content with a timeout safeguard
     await page.setContent(html, { waitUntil: 'networkidle0' });
-
+     let pdfBuffer;
     // Generate the PDF with desired options
-    const pdfBuffer = await page.pdf({
-      format: 'A3',
-      printBackground: true, // Include background styles
-    });
+    if(pdfType === "pdfInvoice"){
+      pdfBuffer = await page.pdf({
+        format: 'A3',
+        printBackground: true, // Include background styles
+      });
+    }
+    if(pdfType === "pdfPolicy"){
+       pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true, // Include background styles
+      });
+    }
+    
 
     return pdfBuffer;
   } catch (error) {

@@ -61,7 +61,7 @@ const getEmailTemplate = (
             <p>Account Details:</p>
           
             <p>Here are your login details:</p>
-            <p>Login URL - <a href="https://360policy.com">360 Policy</a></p>
+            <p>Login URL - <a href="https://360carprotect.in/360policy/login">360 Policy</a></p>
             <p>Email ID - ${email}</p>
             <p>Password: - ${password}</p>
             <p>Please use the above credentials to log in and change your password for security reasons. </p>
@@ -86,7 +86,7 @@ const getEmailTemplate = (
               <p>To review the terms and conditions and provide your agreement, click the link below:</p>
               <p>Review and Agree</p>
               <p>Click on the link to verify and approve - 
-                <a href="https://360policy.com/customer-consent?noav=${expires}&efall=${encodeEmail(
+                <a href="https://360carprotect.in/customer-consent?noav=${expires}&efall=${encodeEmail(
         email
       )}">Consent of 360 Policy Terms & Conditions</a>
               </p>
@@ -173,6 +173,7 @@ const getEmailTemplate = (
                       <div style="${styles}">
                         <p>Dear Admin,</p>
                         <p>We have reviewed the invoice (Invoice Number: ${invoiceId}) and regret to inform you that it has been rejected.</p>
+                        <p>Reason for Rejection: ${reason}</p>
                         <p>Please let us know if further action is required on our end.</p>
                        
                         <p>Best Regards,</p>
@@ -189,7 +190,6 @@ const getEmailTemplate = (
               <p>We regret to inform you that the policy submitted for your customer, ${customerName}, has been rejected.</p>
               <p>Reason for Rejection: ${reason}</p>
               <p>Next Steps: Please review the details and make the necessary corrections before resubmitting the policy. If you need further clarification, feel free to reach out.</p>
-             
               <p>Thank you for your understanding and cooperation.</p></br>
               <p>Best Regards,</p>
               <p>360 Car Protect</p>
@@ -575,7 +575,7 @@ exports.invoiceApproved = async (invoiceId) => {
   });
 };
 
-exports.invoiceRejected = async (invoiceId) => {
+exports.invoiceRejected = async (invoiceId, message) => {
   const subject = "Invoice Rejected";
   const htmlContent = getEmailTemplate(
     "invoiceRejected",
@@ -585,7 +585,7 @@ exports.invoiceRejected = async (invoiceId) => {
     null, // agentName
     null, // policyId
     null, // vehicleModel
-    null,
+    message,
     null,
     invoiceId
   );

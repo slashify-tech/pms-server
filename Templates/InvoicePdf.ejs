@@ -5,25 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tax Invoice</title>
 </head>
-<body style="font-family: Arial, sans-serif; font-size: 12px;">
+<body style="font-family: 'Times New Roman', serif; font-size: 12px;">
+
   <div style=" border: 1px solid black; padding: 36px;">
+    <div style="display: flex; flex-direction: row; align-items: start; gap: 20%; font-size: 11px;">
+      <img src="https://firebasestorage.googleapis.com/v0/b/car-protect-99a26.firebasestorage.app/o/files%2FInvoice%20logo%20360.png?alt=media&token=65bc5a9d-a94d-4f72-8dc7-aeeea0a7434f" alt="logo" style="width: 11%;">
   <div style="text-align: center; margin-bottom: 20px;">
     <h2 style="margin: 0;">360 Car Protect India LLP</h2>
     <h3 style="margin: 0;">3-4-138, A/Flat No. 501, Royal Elegance, Barkatpura, Hyderabad, Telangana</h3>
     <h3 style="margin: 0;">TS-500027</h3>
     <h3 style="margin: 0;">State Code: 36, GSTIN: 36AADFZ5034G1Z5</h3>
     <h3 style="margin: 0;">PAN: AADFZ5034G</h3>
-  </div>
+  </div></div>
 
-  <table style="width: 100%; border-collapse: collapse; border: 1px solid black;">
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid black; font-size: 10px;">
     <tr>
    
       <td style=" width: 60%; border: 1px solid black; padding: 8px;">
-        <h2>Tax Invoice </h2>
+        <h2 style="font-size:14px ;">Tax Invoice </h2>
        
       </td>
       
-      <th style=" border-collapse: collapse; width: 100%; text-align: left;">
+      <th style=" border-collapse: collapse; width: 100%; text-align: left; ">
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <th style="width: 50%; border:1px solid black ; padding: 5px; text-align: left;">Invoice Type:</th>
@@ -42,7 +45,7 @@
     </tr>
     
   </table>
-  <table style="width: 100%; border-collapse: collapse; border: 1px solid black;">
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid black; font-size: 10px;">
     <tr>
       <td style="width: 33%; border: 1px solid black; padding: 8px;">
         <b>Bill To:</b><br>
@@ -81,11 +84,10 @@
         Contact No: <%= data.deliveryDetails.contact %>
       </td>
     </tr>
-  </table>
 
 
 
-<table style="border-collapse: collapse; width: 100%;  font-family: Arial, sans-serif;">
+<table style="border-collapse: collapse;  font-size: 9px; ">
     <tr>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">S.No</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; word-wrap: break-word;">Description of Goods/Services</th>
@@ -101,9 +103,10 @@
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">UTGST</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">CESS</th>
 
+
     </tr>
     <tr>
-        <td style="border: 1px solid black; padding: 8px;">S.No</td>
+        <td style="border: 1px solid black; padding: 8px;">1</td>
         <td style="border: 1px solid black; padding: 8px;  word-wrap: break-word;"><%= data.customerBillingDetails.description %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.hsnCode %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.quantity %></td>
@@ -121,6 +124,7 @@
         <td style="border: 1px solid black; padding: 8px;">Amount (INR)</td>
         <td style="border: 1px solid black; padding: 8px;">Rate %</td>
         <td style="border: 1px solid black; padding: 8px;">Amount (INR)</td>
+
     </tr>
     <tr>
         <td style="border: 1px solid black; padding: 8px;" colspan="8"></td>
@@ -143,9 +147,10 @@
             <td style="border: 1px solid black; padding: 8px;  word-wrap: break-word;">₹<%= data.customerBillingDetails.totalinvoiceamount %></td>
         </tr>
     </tr>
+  </table>
 </table>
 
-<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; margin-top: 20px;">
+<table style="border-collapse: collapse; width: 100%;  margin-top: 20px; font-size: 10px;">
     <tr>
         <td style="border: 1px solid black; padding: 8px;">Veh No:</td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.vehicleDetails.vehnumber %></td>
@@ -178,10 +183,10 @@
     </tr>
 </table>
 
-<p style="font-family: Arial, sans-serif;">Declaration/Terms and Conditions:</p>
-<p style="font-family: Arial, sans-serif;">Above package can be availed only at all branches of Silver Star (Hyderabad, Vizag, Pune, Kolhapur, Nashik, Aurangabad)</p>
+<p style=" font-size: 10px;">Declaration/Terms and Conditions:</p>
+<p style=" font-size: 10px;">Above package can be availed only at all branches of Silver Star (Hyderabad, Vizag, Pune, Kolhapur, Nashik, Aurangabad)</p>
 
-<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; margin-top: 20px;">
+<table style="border-collapse: collapse; width: 100%;  margin-top: 20px; font-size: 10px;">
     <tr>
         <td style="border: 1px solid black; padding: 8px;">Warranty Validity:</td>
         <td style="border: 1px solid black; padding: 8px;">Start Date</td>
@@ -194,11 +199,11 @@
     </tr>
 </table>
 
-<p style="font-family: Arial, sans-serif;">Certified that the particulars given above are true and correct</p>
-<p style="font-family: Arial, sans-serif;">All Disputes Subject to Jurisdiction of Hyderabad</p>
+<p style="font-size: 10px;"></p>">Certified that the particulars given above are true and correct</p>
+<p style="font-size: 10px;">All Disputes Subject to Jurisdiction of Hyderabad</p>
 
-<p style="text-align: right; font-family: Arial, sans-serif;">For 360 Car Protect India LLP</p>
-<p style="text-align: right; font-family: Arial, sans-serif;">Authorized Signatory</p>
+<p style="text-align: right;  font-size: 10px;">For 360 Car Protect India LLP</p>
+<p style="text-align: right;  font-size: 10px;">Authorized Signatory</p>
 
  
 

@@ -193,7 +193,7 @@ exports.invoiceApproval = async (req, res) => {
     if (approvalStatus === "approved") {
       await invoiceApproved(invoiceData.invoiceId);
     } else if (approvalStatus === "rejected") {
-      await invoiceRejected(invoiceData.invoiceId);
+      await invoiceRejected(invoiceData.invoiceId, message);
     }
 
     // Respond with the updated invoice
