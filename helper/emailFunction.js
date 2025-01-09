@@ -86,7 +86,7 @@ const getEmailTemplate = (
               <p>To review the terms and conditions and provide your agreement, click the link below:</p>
               <p>Review and Agree</p>
               <p>Click on the link to verify and approve - 
-                <a href="http://localhost:5173/customer-consent?noav=${expires}&efall=${encodeEmail(
+                <a href="https://360policy.com/customer-consent?noav=${expires}&efall=${encodeEmail(
         email
       )}">Consent of 360 Policy Terms & Conditions</a>
               </p>
