@@ -31,6 +31,12 @@ exports.getDocumentData = async (req, res) => {
       : {};
 
     const commonData = await Policy.aggregate([
+      // Match policies where policyStatus is approved
+      {
+        $match: {
+          policyStatus: "approved",
+        },
+      },
       {
         $lookup: {
           from: "invoices",
@@ -40,7 +46,16 @@ exports.getDocumentData = async (req, res) => {
         },
       },
       {
-        $unwind: "$invoiceDetails",
+        $unwind: {
+          path: "$invoiceDetails",
+          preserveNullAndEmptyArrays: false, // Exclude policies without invoice details
+        },
+      },
+      // Match invoices where invoiceStatus is approved
+      {
+        $match: {
+          "invoiceDetails.invoicestatus": "approved",
+        },
       },
       {
         $lookup: {
@@ -53,10 +68,10 @@ exports.getDocumentData = async (req, res) => {
       {
         $unwind: {
           path: "$documentStatus",
-          preserveNullAndEmptyArrays: true, // Include policies without documentStatus
+          preserveNullAndEmptyArrays: true, // Include policies without a documentStatus
         },
       },
-      // Apply the search condition
+      // Apply search condition
       {
         $match: searchCondition,
       },
@@ -84,8 +99,13 @@ exports.getDocumentData = async (req, res) => {
       },
     ]);
 
-    // Count total documents matching the search condition
+    // Count total documents matching conditions
     const totalCount = await Policy.aggregate([
+      {
+        $match: {
+          policyStatus: "approved",
+        },
+      },
       {
         $lookup: {
           from: "invoices",
@@ -95,7 +115,15 @@ exports.getDocumentData = async (req, res) => {
         },
       },
       {
-        $unwind: "$invoiceDetails",
+        $unwind: {
+          path: "$invoiceDetails",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $match: {
+          "invoiceDetails.invoicestatus": "approved",
+        },
       },
       {
         $match: searchCondition,
@@ -123,13 +151,14 @@ exports.getDocumentData = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching document data:", error);
     return res.status(500).json({
       message: "Something went wrong",
       error,
     });
   }
 };
+
 
 
 exports.updateDocumentStatus = async (req, res) => {

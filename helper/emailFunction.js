@@ -4,7 +4,7 @@ const { encodeEmail } = require("../Utility/utilityFunc");
 
 dotenv.config();
 
-const ADMIN_EMAIL = process.env.ADMINS_EMAIL ;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL  ;
 
 const sendUserEmail = async ({
   to,
@@ -145,7 +145,7 @@ const getEmailTemplate = (
                   
                     <p>Please let me know if further input is required.</p>
                    
-                    <p>Best Regards</p></br>
+                    <p>Best Regards</p>
                  <p>${userName}</p>
                     <hr/>
                     <p>For any queries please reach out to us at ${ADMIN_EMAIL}</p>
@@ -191,7 +191,8 @@ const getEmailTemplate = (
               <p>Next Steps: Please review the details and make the necessary corrections before resubmitting the policy. If you need further clarification, feel free to reach out.</p>
              
               <p>Thank you for your understanding and cooperation.</p></br>
-           <p>360 Car Protect</p>
+              <p>Best Regards,</p>
+              <p>360 Car Protect</p>
               <hr/>
               <p>For any queries please reach out to us at ${ADMIN_EMAIL}</p>
             </div>

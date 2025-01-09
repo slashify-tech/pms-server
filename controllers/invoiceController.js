@@ -167,27 +167,36 @@ exports.invoiceApproval = async (req, res) => {
   const { invoiceId, approvalStatus, message } = req.query;
 
   try {
-    const invoiceData = await Invoice.findOne({ _id: invoiceId });
+    // Validate required parameters
+    if (!invoiceId || !approvalStatus) {
+      return res.status(400).json({ message: "Missing required parameters" });
+    }
 
+
+    // Find and update the invoice
+    const updateData = { invoicestatus: approvalStatus };
+    if (approvalStatus === "rejected") {
+      updateData.rejectionReason = message || "Rejected";
+    }
+
+    const invoiceData = await Invoice.findOneAndUpdate(
+      { _id: invoiceId }, // Query to find the invoice
+      { $set: updateData }, // Update data
+      { new: true } // Return the updated document
+    );
+    
     if (!invoiceData) {
       return res.status(404).json({ message: "Invoice not found" });
     }
 
-    // Update the status based on the approvalStatus
+    // Trigger the appropriate action based on the status
     if (approvalStatus === "approved") {
-      invoiceData.invoicestatus = "approved";
       await invoiceApproved(invoiceData.invoiceId);
     } else if (approvalStatus === "rejected") {
-      invoiceData.invoicestatus = "rejected";
-      invoiceData.rejectionReason = message || "Rejected";
       await invoiceRejected(invoiceData.invoiceId);
-    } else {
-      return res.status(400).json({ message: "Invalid approval status" });
     }
 
-    // Save the updated document
-    await invoiceData.save();
-
+    // Respond with the updated invoice
     res.status(200).json({
       message: `Invoice ${approvalStatus} successfully`,
       invoice: invoiceData,
@@ -200,6 +209,7 @@ exports.invoiceApproval = async (req, res) => {
     });
   }
 };
+
 
 exports.invoiceById = async (req, res) => {
   const { invoiceId } = req.query;

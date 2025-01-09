@@ -65,7 +65,7 @@ const generatePdf = async (html) => {
 
     // Generate the PDF with desired options
     const pdfBuffer = await page.pdf({
-      format: 'A4',
+      format: 'A3',
       printBackground: true, // Include background styles
     });
 

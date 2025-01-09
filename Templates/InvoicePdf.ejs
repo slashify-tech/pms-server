@@ -85,27 +85,26 @@
 
 
 
-  <table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
+<table style="border-collapse: collapse; width: 100%;  font-family: Arial, sans-serif;">
     <tr>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">S.No</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Description of Goods/Services</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">HSN/S AC Code</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; word-wrap: break-word;">Description of Goods/Services</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;  word-wrap: break-word;">HSN/S AC Code</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Qty.</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Rate</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Total</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Discount</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Taxable Value</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;  word-wrap: break-word;">Taxable Value</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">CGST</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SGST</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">IGST</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">UTGST</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">CESS</th>
 
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Total Amount (INR)</th>
     </tr>
     <tr>
         <td style="border: 1px solid black; padding: 8px;">S.No</td>
-        <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.description %></td>
+        <td style="border: 1px solid black; padding: 8px;  word-wrap: break-word;"><%= data.customerBillingDetails.description %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.hsnCode %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.quantity %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.rate %></td>
@@ -122,7 +121,6 @@
         <td style="border: 1px solid black; padding: 8px;">Amount (INR)</td>
         <td style="border: 1px solid black; padding: 8px;">Rate %</td>
         <td style="border: 1px solid black; padding: 8px;">Amount (INR)</td>
-        <td style="border: 1px solid black; padding: 8px;"></td>
     </tr>
     <tr>
         <td style="border: 1px solid black; padding: 8px;" colspan="8"></td>
@@ -136,14 +134,13 @@
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.ugst %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.cesspercentage %></td>
         <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.cess %></td>
-        <td style="border: 1px solid black; padding: 8px;"><%= data.customerBillingDetails.totalinvoiceamount %></td>
 
 
         <tr>
             <td style="border: 1px solid black; padding: 8px;" colspan="16"></td>
-            <th style="border: 1px solid black; padding: 8px; width: 12%;">Total Invoice Amount</th>
+            <th style="border: 1px solid black; padding: 8px; width: 12%;">Total Invoice Amount (INR)</th>
          
-            <td style="border: 1px solid black; padding: 8px; ">₹<%= data.customerBillingDetails.totalinvoiceamount %></td>
+            <td style="border: 1px solid black; padding: 8px;  word-wrap: break-word;">₹<%= data.customerBillingDetails.totalinvoiceamount %></td>
         </tr>
     </tr>
 </table>

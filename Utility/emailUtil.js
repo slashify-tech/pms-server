@@ -20,7 +20,7 @@ const sendEmail = async ({
   policyFilename,
   invoiceFilename,
 }) => {
-
+console.log(to, "email check")
   // if (!pdfPolicyBuffer || !pdfInvoiceBuffer) {
   //   console.error("PDF buffers are required. Received:", {
   //     pdfPolicyBuffer,
@@ -58,7 +58,7 @@ const sendEmail = async ({
     await apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log("Email sent successfully");
   } catch (error) {
-    // console.log("Error sending email:", error);
+    console.log("Error sending email:", error);
     throw error;
   }
 };
