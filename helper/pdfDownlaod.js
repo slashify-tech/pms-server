@@ -52,11 +52,12 @@ const generatePdf = async (html) => {
   let browser;
   try {
     // Launch Puppeteer with error-resilient options
-    browser = await puppeteer.launch({
+     browser = await puppeteer.launch({
+      executablePath: '/usr/bin/chromium-browser', // Path to system-installed Chromium
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add sandbox flags for restricted environments
-      timeout: 60000, // Increase timeout to 60 seconds
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
+    
 
     const page = await browser.newPage();
 
