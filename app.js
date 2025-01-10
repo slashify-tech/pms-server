@@ -20,7 +20,7 @@ http = require("http");
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 8800;
+const port = process.env.PORT || 8080;
 
 
 // async function mongoDBConnection(){

@@ -18,17 +18,27 @@ const Teams = require("../model/TeamsModel");
 exports.policyFormData = async (req, res) => {
   try {
     const policyData = req.body;
-    const { vehicleEngineNumber, vehicleRegNumber, teamId, teams } = policyData;
+    const { vehicleEngineNumber, vehicleRegNumber, email } = policyData;
 
-    // Check for duplicate policies
-    const duplicatePolicy = await Policy.findOne({
-      $or: [{ vehicleEngineNumber }, { vehicleRegNumber }],
-    });
-
-    if (duplicatePolicy) {
+    const duplicateVehicleEngineNumber = await Policy.findOne({ vehicleEngineNumber });
+    if (duplicateVehicleEngineNumber) {
       return res.status(400).json({
-        message:
-          "Vehicle Engine Number or Vehicle Registration Number already exists in another policy.",
+        message: "Vehicle registration number already exists",
+      });
+    }
+    
+    
+    const duplicateRegNumber = await Policy.findOne({ vehicleRegNumber });
+    if (duplicateRegNumber) {
+      return res.status(400).json({
+        message: "Vehicle registration number already exists",
+      });
+    }
+    
+    const duplicateEmail = await Policy.findOne({ email });
+    if (duplicateEmail) {
+      return res.status(400).json({
+        message: "Email already exists",
       });
     }
 
@@ -59,6 +69,39 @@ exports.editPolicy = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedData = req.body;
+
+    // Check for duplicates
+    if (updatedData.vehicleEngineNumber) {
+      const duplicateEngineNumber = await Policy.findOne({
+        vehicleEngineNumber: updatedData.vehicleEngineNumber,
+        _id: { $ne: id }, // Exclude the current policy being updated
+      });
+      if (duplicateEngineNumber) {
+        return res.status(400).json({ message: "Vehicle engine number already exists" });
+      }
+    }
+
+    if (updatedData.vehicleRegNumber) {
+      const duplicateRegNumber = await Policy.findOne({
+        vehicleRegNumber: updatedData.vehicleRegNumber,
+        _id: { $ne: id }, // Exclude the current policy being updated
+      });
+      if (duplicateRegNumber) {
+        return res.status(400).json({ message: "Vehicle registration number already exists" });
+      }
+    }
+
+    if (updatedData.email) {
+      const duplicateEmail = await Policy.findOne({
+        email: updatedData.email,
+        _id: { $ne: id }, // Exclude the current policy being updated
+      });
+      if (duplicateEmail) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+    }
+
+    // Update the policy
     const updatedPolicy = await Policy.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
@@ -74,6 +117,7 @@ exports.editPolicy = async (req, res) => {
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
+
 
 
 exports.deletePolicy = async (req, res) => {

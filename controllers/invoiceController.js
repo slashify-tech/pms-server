@@ -6,10 +6,10 @@ exports.addInvoice = async (req, res) => {
   const { email, ...payload } = req.body;
 
   try {
-    const existingEmail = await Invoice.findOne({ email: email });
-    // if (existingEmail) {
-    //   return res.status(400).json({ message: "Email already exists" });
-    // }
+    const existingEmail = await Invoice.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
 
     // Generate a unique invoiceId using Counter collection
     const counter = await InvoiceCounter.findOneAndUpdate(
