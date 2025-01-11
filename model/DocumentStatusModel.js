@@ -5,7 +5,7 @@ const statusSchema = new mongoose.Schema({
     type: String,
     // required: true,
     enum: ["send", "pending", "approved", "rejected"],
-    default: "send"
+    default: "send",
   },
   updatedAt: {
     type: Date,
@@ -20,14 +20,16 @@ const documentStatusSchema = new mongoose.Schema({
   clientApproval: {
     type: statusSchema,
   },
-  // autoApproval: {
-  //   type: statusSchema,
-  // },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   customerName: {
     type: String,
   },
-  message:{
-    type:String,
+  message: {
+    type: String,
   },
   email: {
     type: String,

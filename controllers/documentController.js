@@ -171,6 +171,7 @@ exports.updateDocumentStatus = async (req, res) => {
     autoApproval,
     message,
     email,
+    userId,
   } = req.body;
   try {
     let documentStatus = await DocumentStatus.findOne({ invoiceId, policyId });
@@ -202,11 +203,9 @@ exports.updateDocumentStatus = async (req, res) => {
     if (customerName) {
       documentStatus.customerName = customerName;
     }
-    if (message) {
-      documentStatus.message = message;
-    }
-    if (email) {
-      documentStatus.email = email;
+    
+    if (userId) {
+      documentStatus.userId = userId;
     }
     await documentStatus.save();
 
@@ -256,12 +255,13 @@ exports.updateDocumentStatus = async (req, res) => {
 
 exports.getStatusRequestForAgent = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, userId } = req.query;
 
     const skip = (page - 1) * limit;
 
     const data = await DocumentStatus.find({
       "agentApproval.status": "pending",
+      userId: userId
     })
       .skip(skip)
       .limit(Number(limit));
