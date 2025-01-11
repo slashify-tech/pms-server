@@ -3,14 +3,17 @@ const Invoice = require("../model/InvoiceModel");
 const InvoiceCounter = require("../model/InvoiceCounterModel");
 
 exports.addInvoice = async (req, res) => {
-  const { email, ...payload } = req.body;
+  const {role, email, ...payload } = req.body;
 
   try {
     const existingEmail = await Invoice.findOne({ email });
     if (existingEmail) {
       return res.status(400).json({ message: "Email already exists" });
     }
-
+   let invoiceStatus
+    if(role === "1"){
+       invoiceStatus = "approved"
+    }
     // Generate a unique invoiceId using Counter collection
     const counter = await InvoiceCounter.findOneAndUpdate(
       { name: "invoiceId" },
@@ -25,6 +28,7 @@ exports.addInvoice = async (req, res) => {
     const newInvoice = new Invoice({
       email,
       invoiceId,
+      invoiceStatus,
       ...payload,
     });
 
@@ -115,9 +119,8 @@ exports.getAllInvoice = async (req, res) => {
     });
   }
 };
-
 exports.getInvoicesByStatus = async (req, res) => {
-  const { page = 1, limit = 10, invoiceStatus, searchTerm } = req.query;
+  const { page = 1, limit = 10, invoiceStatus, searchTerm, createdBy } = req.query;
 
   try {
     const pageNumber = Math.max(1, parseInt(page, 10));
@@ -125,9 +128,11 @@ exports.getInvoicesByStatus = async (req, res) => {
 
     const startIndex = (pageNumber - 1) * pageSize;
 
+    // Build filter object
     const filter = {
       ...(invoiceStatus && { invoiceStatus }),
       ...(searchTerm && { invoiceId: { $regex: searchTerm, $options: "i" } }),
+      ...(createdBy && { createdBy }),
     };
 
     const [totalInvoicesCount, invoices] = await Promise.all([
@@ -162,6 +167,7 @@ exports.getInvoicesByStatus = async (req, res) => {
     });
   }
 };
+
 
 exports.invoiceApproval = async (req, res) => {
   const { invoiceId, approvalStatus, message } = req.query;

@@ -151,6 +151,11 @@ const invoiceSchema = mongoose.Schema({
     enum: ["yetToApproved", "approved", "rejected"],
     default: "yetToApproved",
   },
+  createdBy:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   approvedAt: {
     type: Date,
     default: new Date().toISOString(),

@@ -64,7 +64,7 @@ const getEmailTemplate = (
             <p>Login URL - <a href="https://360carprotect.in/360policy/login">360 Policy</a></p>
             <p>Email ID - ${email}</p>
             <p>Password: - ${password}</p>
-            <p>Please use the above credentials to log in and change your password for security reasons. </p>
+            <p>Please use the above credentials to log in. </p>
             <p>If you encounter any issues, feel free to reach out to our support team.</p>
             <p>Welcome aboard, and we look forward to working with you!</p></br></br>
             <p>Best regards,</p>

@@ -3,7 +3,7 @@ const userSchema = require("../model/User");
 const dotenv = require("dotenv");
 const fs = require("fs");
 // const { encryptText, decryptText } = require("../Utility/utilityFunc");
-const {sendAgentCredEmail}  = require("../helper/emailFunction");
+const { sendAgentCredEmail } = require("../helper/emailFunction");
 const json2csv = require("json2csv").parse;
 dotenv.config();
 
@@ -20,8 +20,6 @@ exports.signinController = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-
-
     const token = jwt.sign(
       {
         email: existingUser.email,
@@ -33,7 +31,7 @@ exports.signinController = async (req, res) => {
 
     res.status(200).json({ token, user: existingUser });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
@@ -80,13 +78,12 @@ exports.getUserDataById = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-
     const { password, confirmPassword, ...userData } = user.toObject();
     const response = {
       ...userData,
       password: user.password,
       confirmPassword: user.confirmPassword,
-    }
+    };
     res.status(200).json(response);
   } catch (err) {
     console.error("Error fetching user data:", err);
@@ -94,14 +91,18 @@ exports.getUserDataById = async (req, res) => {
   }
 };
 
-
-
-
 exports.addAgent = async (req, res) => {
   try {
     const agentData = req.body;
-    const { id } = req.query; 
-    const { email, password, confirmPassword, contactNumber, agentId, agentName } = agentData;
+    const { id } = req.query;
+    const {
+      email,
+      password,
+      confirmPassword,
+      contactNumber,
+      agentId,
+      agentName,
+    } = agentData;
 
     if (id) {
       const existingAgent = await userSchema.findById(id);
@@ -110,28 +111,30 @@ exports.addAgent = async (req, res) => {
         return res.status(404).json({ message: "Agent not found for update" });
       }
 
-      const existingContactAgent = await userSchema.findOne({ 
-        contact: contactNumber, 
-        _id: { $ne: id } 
+      const existingContactAgent = await userSchema.findOne({
+        contact: contactNumber,
+        _id: { $ne: id },
       });
 
-      const existingEmailAgent = await userSchema.findOne({ 
-        email: email, 
-        _id: { $ne: id } 
+      const existingEmailAgent = await userSchema.findOne({
+        email: email,
+        _id: { $ne: id },
       });
 
       if (existingContactAgent || existingEmailAgent) {
-        return res.status(400).json({ message: "Email or contact number already exists" });
+        return res
+          .status(400)
+          .json({ message: "Email or contact number already exists" });
       }
 
       const updatedAgent = await userSchema.findByIdAndUpdate(
-        id, 
+        id,
         {
           ...agentData,
-          ...(password && { password: password }), 
+          ...(password && { password: password }),
           ...(confirmPassword && { confirmPassword: confirmPassword }),
         },
-        { new: true } 
+        { new: true }
       );
 
       if (updatedAgent) {
@@ -140,15 +143,7 @@ exports.addAgent = async (req, res) => {
       } else {
         return res.status(404).json({ message: "Agent not found" });
       }
-    } else {
-      const existingContactAgent = await userSchema.findOne({ contact: contactNumber });
-      const existingEmailAgent = await userSchema.findOne({ email });
-
-      if (existingContactAgent || existingEmailAgent) {
-        return res.status(400).json({ message: "Email or contact number already exists" });
-      }
-
-      
+    } 
 
       const newAgent = new userSchema({
         ...agentData,
@@ -157,18 +152,17 @@ exports.addAgent = async (req, res) => {
       });
 
       await newAgent.save();
-      // await sendAgentCredEmail(email, password, agentName); 
+      // await sendAgentCredEmail(email, password, agentName);
 
       return res.status(201).json({ message: "Agent added successfully" });
-    }
-
+ 
   } catch (err) {
     console.log("Error saving agent data:", err);
-    res.status(500).json({ message: "Something went wrong", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Something went wrong", error: err.message });
   }
 };
-
-
 
 exports.deleteAgent = async (req, res) => {
   try {
@@ -205,7 +199,8 @@ exports.getAllAgents = async (req, res) => {
 
 exports.getMGagent = async (req, res) => {
   try {
-    const mgAgents = await userSchema.find({ roleType: "1" });
+    const query = { roleType: "2", brandName: "MG" };
+    const mgAgents = await userSchema.find(query);
     if (mgAgents.length === 0) {
       return res.status(404).json({ message: "No MG agents found" });
     }
@@ -218,7 +213,9 @@ exports.getMGagent = async (req, res) => {
 
 exports.getMBagent = async (req, res) => {
   try {
-    const mbAgents = await userSchema.find({ roleType: "2" });
+    const query = { roleType: "2", brandName: "MB" };
+
+    const mbAgents = await userSchema.find(query);
     if (mbAgents.length === 0) {
       return res.status(404).json({ message: "No MG agents found" });
     }
@@ -228,6 +225,22 @@ exports.getMBagent = async (req, res) => {
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
+
+exports.getUserDataByBrand = async (req, res) => {
+  const { brandName } = req.query;
+
+  try {
+    const query = { roleType: "1", brandName };
+    const teamMembers = await userSchema.find(query);
+
+    // Send the response
+    return res.status(200).json({ success: true, data: teamMembers });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+};
+
 
 exports.downloadCsv = async (req, res) => {
   try {

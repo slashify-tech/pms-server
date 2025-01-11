@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { getPendingPolicy, updatePolicyStatus,  disablePolicy, getCancelledPolicy, getAllPolicy, getAllPolicyCount, getCancelledPolicyCount, downloadPolicyCsv } = require("../controllers/PoliciesController");
-const { addAgent, getMBagent, getMGagent, deleteAgent } = require("../controllers/UserController");
+const { addAgent, getMBagent, getMGagent, deleteAgent, getUserDataByBrand } = require("../controllers/UserController");
 
     router.post("/add-new-agent", addAgent);
     router.put("/policyStatus", updatePolicyStatus)
@@ -12,6 +12,7 @@ const { addAgent, getMBagent, getMGagent, deleteAgent } = require("../controller
 
     router.get("/mb-agents", getMBagent);
     router.get("/mg-agents", getMGagent);
+    router.get("/team-members", getUserDataByBrand);
     router.get("/pendingPolicy", getPendingPolicy)
     router.get("/get-cancelled-policy", getCancelledPolicy)
     router.get("/get-all-policy", getAllPolicy)
