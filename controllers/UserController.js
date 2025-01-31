@@ -8,7 +8,7 @@ const json2csv = require("json2csv").parse;
 dotenv.config();
 
 exports.signinController = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
   if (!email || !password) {
     return res.status(400).json({ message: "Invalid Field" });
