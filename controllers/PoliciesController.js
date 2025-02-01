@@ -519,12 +519,12 @@ exports.getFilteredPolicyById = async (req, res) => {
   try {
     const totalPoliciesCount = await Policy.countDocuments({
       $or: [{ userId: id }, { _id: id }],
-      policyStatus: { $ne: "yetToApproved" },
+      // policyStatus: { $ne: "yetToApproved" },
     });
 
     const data = await Policy.find({
       $or: [{ userId: id }, { _id: id }],
-      policyStatus: { $nin: ["yetToApproved", "rejected"] },
+      // policyStatus: { $nin: ["yetToApproved", "rejected"] },
     })
       .skip(startIndex)
       .limit(pageSize);
@@ -855,6 +855,7 @@ exports.getSalesData = async (req, res) => {
   const matchFilter = {
     isDisabled: false,
     policyType: "MB",
+    policyStatus: { $in: ["approved"] },
   };
 
   if (year) {

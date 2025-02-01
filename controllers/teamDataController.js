@@ -60,7 +60,7 @@ exports.topPerformerLists = async (req, res) => {
     const matchConditions = {
       policyType: "MB",
       isDisabled: false, 
-      policyStatus: { $ne: "rejected" },
+      policyStatus: { $in: ["approved"] },
     };
 
     if (search) {

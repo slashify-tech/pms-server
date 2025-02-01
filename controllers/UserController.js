@@ -85,8 +85,6 @@ exports.getUserDataById = async (req, res) => {
     const { password, confirmPassword, ...userData } = user.toObject();
     const response = {
       ...userData,
-      password: user.password,
-      confirmPassword: user.confirmPassword,
     };
     res.status(200).json(response);
   } catch (err) {
