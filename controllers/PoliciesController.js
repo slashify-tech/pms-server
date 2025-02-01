@@ -87,7 +87,7 @@ exports.editPolicy = async (req, res) => {
     if (updatedData.vehicleRegNumber) {
       const duplicateRegNumber = await Policy.findOne({
         vehicleRegNumber: updatedData.vehicleRegNumber,
-        _id: { $ne: id }, 
+        _id: { $ne: id },
       });
       if (duplicateRegNumber) {
         return res
@@ -526,6 +526,7 @@ exports.getFilteredPolicyById = async (req, res) => {
       $or: [{ userId: id }, { _id: id }],
       // policyStatus: { $nin: ["yetToApproved", "rejected"] },
     })
+      .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(pageSize);
 
@@ -563,6 +564,7 @@ exports.getCancelledPolicy = async (req, res) => {
     });
     const pageSize = limit || 10;
     const policies = await Policy.find({ isDisabled: true })
+    .sort({ createdAt: -1 }) 
       .skip(skip)
       .limit(limit);
 

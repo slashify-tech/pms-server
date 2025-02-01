@@ -10,9 +10,9 @@ exports.addInvoice = async (req, res) => {
     if (existingEmail) {
       return res.status(400).json({ message: "Email already exists" });
     }
-   let invoiceStatus
+   let invoicestatus
     if(role === "1"){
-       invoiceStatus = "approved"
+      invoicestatus = "approved"
     }
     const counter = await InvoiceCounter.findOneAndUpdate(
       { name: "invoiceId" },
@@ -27,7 +27,7 @@ exports.addInvoice = async (req, res) => {
     const newInvoice = new Invoice({
       email,
       invoiceId,
-      invoiceStatus,
+      invoicestatus,
       ...payload,
     });
 
