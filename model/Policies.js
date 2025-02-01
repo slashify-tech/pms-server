@@ -41,7 +41,7 @@ const policySchema = mongoose.Schema(
     customerGstNumber: { type: String, required: false },
     vehicleManufacturer: { type: String, required: false },
     mbModel: { type: String, required: false },
-    mbModel: { type: String, required: false },
+    mbClass: { type: String, required: false },
     vehicleModel: { type: String, required: false },
     vehicleIdNumber: { type: String, required: false },
     vehicleEngineNumber: {type: String, required: false},

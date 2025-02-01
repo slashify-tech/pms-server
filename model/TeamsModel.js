@@ -10,7 +10,7 @@ const TeamSchema = mongoose.Schema(
     },
     teamName: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     employeeName: {

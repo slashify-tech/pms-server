@@ -75,7 +75,7 @@ exports.editPolicy = async (req, res) => {
     if (updatedData.vehicleEngineNumber) {
       const duplicateEngineNumber = await Policy.findOne({
         vehicleEngineNumber: updatedData.vehicleEngineNumber,
-        _id: { $ne: id }, // Exclude the current policy being updated
+        _id: { $ne: id },
       });
       if (duplicateEngineNumber) {
         return res
@@ -87,7 +87,7 @@ exports.editPolicy = async (req, res) => {
     if (updatedData.vehicleRegNumber) {
       const duplicateRegNumber = await Policy.findOne({
         vehicleRegNumber: updatedData.vehicleRegNumber,
-        _id: { $ne: id }, // Exclude the current policy being updated
+        _id: { $ne: id }, 
       });
       if (duplicateRegNumber) {
         return res
@@ -99,7 +99,7 @@ exports.editPolicy = async (req, res) => {
     if (updatedData.email) {
       const duplicateEmail = await Policy.findOne({
         email: updatedData.email,
-        _id: { $ne: id }, // Exclude the current policy being updated
+        _id: { $ne: id },
       });
       if (duplicateEmail) {
         return res.status(400).json({ message: "Email already exists" });

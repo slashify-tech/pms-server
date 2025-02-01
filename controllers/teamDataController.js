@@ -19,7 +19,7 @@ exports.updateTeamData = async (req, res) => {
   const { employeeName, location, leadName, teamName } = req.query;
 
   try {
-    if (!employeeName || !location || !leadName || !teamName) {
+    if (!employeeName ) {
       return res.status(400).json({ message: "All team fields are required." });
     }
 

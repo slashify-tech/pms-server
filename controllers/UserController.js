@@ -152,7 +152,7 @@ exports.addAgent = async (req, res) => {
       });
 
       await newAgent.save();
-      // await sendAgentCredEmail(email, password, agentName);
+      await sendAgentCredEmail(email, password, agentName);
 
       return res.status(201).json({ message: "Agent added successfully" });
  
