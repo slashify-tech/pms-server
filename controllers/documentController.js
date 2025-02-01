@@ -23,7 +23,9 @@ exports.getDocumentData = async (req, res) => {
     const searchCondition = searchTerm
       ? {
           $or: [
-            { "invoiceDetails.invoiceId": { $regex: searchTerm, $options: "i" } },
+            {
+              "invoiceDetails.invoiceId": { $regex: searchTerm, $options: "i" },
+            },
             { policyId: { $regex: searchTerm, $options: "i" } },
             { customerName: { $regex: searchTerm, $options: "i" } },
           ],
@@ -71,10 +73,10 @@ exports.getDocumentData = async (req, res) => {
           preserveNullAndEmptyArrays: true, // Include policies without a documentStatus
         },
       },
-      // Apply search condition
       {
         $match: searchCondition,
       },
+      { $sort: { createdAt: -1 } }, 
       {
         $project: {
           commonEmail: "$email",
@@ -93,6 +95,9 @@ exports.getDocumentData = async (req, res) => {
       },
       {
         $skip: skip,
+      },
+      {
+        $sort: { createdAt: -1 },
       },
       {
         $limit: parsedLimit,
@@ -159,8 +164,6 @@ exports.getDocumentData = async (req, res) => {
   }
 };
 
-
-
 exports.updateDocumentStatus = async (req, res) => {
   const {
     invoiceId,
@@ -203,7 +206,7 @@ exports.updateDocumentStatus = async (req, res) => {
     if (customerName) {
       documentStatus.customerName = customerName;
     }
-    
+
     if (userId) {
       documentStatus.userId = userId;
     }
@@ -231,14 +234,28 @@ exports.updateDocumentStatus = async (req, res) => {
     const agentName = user.agentName;
     const agentEmail = user.email;
     if (agentApproval === "pending") {
-      await documentApprovalToAgent(agentEmail, agentName, invoice.invoiceId, policy.policyId);
+      await documentApprovalToAgent(
+        agentEmail,
+        agentName,
+        invoice.invoiceId,
+        policy.policyId
+      );
     }
 
     if (agentApproval === "rejected") {
-      await documentRejectedByAgent(agentName, message, invoice.invoiceId, policy.policyId);
+      await documentRejectedByAgent(
+        agentName,
+        message,
+        invoice.invoiceId,
+        policy.policyId
+      );
     }
     if (agentApproval === "approved") {
-      await documentApprovedByAgent(agentName, invoice.invoiceId, policy.policyId);
+      await documentApprovedByAgent(
+        agentName,
+        invoice.invoiceId,
+        policy.policyId
+      );
     }
     return res.status(200).json({
       message: "Document status updated successfully",
@@ -261,7 +278,7 @@ exports.getStatusRequestForAgent = async (req, res) => {
 
     const data = await DocumentStatus.find({
       "agentApproval.status": "pending",
-      userId: userId
+      userId: userId,
     })
       .skip(skip)
       .limit(Number(limit));
@@ -358,12 +375,10 @@ exports.CustomerApproval = async (req, res) => {
   try {
     let documentStatus = await DocumentStatus.findOne({ email });
     if (!documentStatus) {
-      return res
-        .status(404)
-        .json({
-          message:
-            "Email not Found, Please enter policy and invoice generated email id",
-        });
+      return res.status(404).json({
+        message:
+          "Email not Found, Please enter policy and invoice generated email id",
+      });
     }
 
     if (clientApproval) {

@@ -308,7 +308,7 @@ exports.emailUpdate = async (req, res) => {
 };
 
 exports.passwordUpdate = async (req, res) => {
-  const { id, password } = req.body;
+  const {currentPassword, id, password } = req.body;
 
   try {
     if (!id || !password) {
@@ -321,10 +321,12 @@ exports.passwordUpdate = async (req, res) => {
       return res.status(404).send({ message: "User not found" });
     }
 
-    userData.password = encryptText(password);
-    if (userData.password !== encryptText(password)) {
-      return res.status(404).send({ message: "Incorrect password" });
+    const decryptedStoredPassword = decryptText(userData.password);
+
+    if (decryptedStoredPassword !== currentPassword) {
+      return res.status(400).json({ message: "Incorrect current password" });
     }
+    userData.password = encryptText(password);
 
     await userData.save();
 
