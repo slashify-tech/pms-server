@@ -564,7 +564,7 @@ exports.getCancelledPolicy = async (req, res) => {
     });
     const pageSize = limit || 10;
     const policies = await Policy.find({ isDisabled: true })
-    .sort({ createdAt: -1 }) 
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -944,5 +944,52 @@ exports.addNewModel = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong", error });
+  }
+};
+
+exports.getExpiredWarrantyCount = async (req, res) => {
+  try {
+    const todayUTC = new Date();
+
+    const todayISTEnd = new Date(todayUTC.getTime());
+    todayISTEnd.setHours(23, 59, 59, 999);
+
+    const todayFormatted = todayISTEnd.toISOString().split('T')[0];
+
+    console.log(new Date(todayFormatted), "test");
+
+    const expiredCountResult = await Policy.aggregate([
+      {
+        $match: {
+          $expr: {
+            $lt: [
+              {
+                $dateFromString: {
+                  dateString: "$extWarrantyEndDate",
+                  format: "%d-%m-%Y"
+                }
+              },
+              new Date(todayFormatted) 
+            ]
+          }
+        },
+      },
+      {
+        $count: "expiredCount", 
+      },
+    ]);
+
+    const expiredCount = expiredCountResult[0]?.expiredCount || 0;
+
+    return res.status(200).json({
+      message: "Expired warranty count fetched successfully",
+      expiredCount,
+    });
+  } catch (error) {
+    console.error("Error fetching expired warranty count:", error);
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
   }
 };

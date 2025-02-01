@@ -76,7 +76,7 @@ exports.getDocumentData = async (req, res) => {
       {
         $match: searchCondition,
       },
-      { $sort: { createdAt: -1 } }, 
+      { $sort: { createdAt: -1 } },
       {
         $project: {
           commonEmail: "$email",
@@ -178,12 +178,19 @@ exports.updateDocumentStatus = async (req, res) => {
   } = req.body;
   try {
     let documentStatus = await DocumentStatus.findOne({ invoiceId, policyId });
-
+    const policy = await Policy.findById(policyId);
+    const userData = await User.findById(policy.userId);
     if (!documentStatus) {
       documentStatus = new DocumentStatus({ invoiceId, policyId });
     }
+    console.log(userData);
 
-    if (agentApproval) {
+    if (userData.roleType === "0") {
+      documentStatus.agentApproval = {
+        status: "approved",
+        updatedAt: Date.now(),
+      };
+    } else if (!userData || userData.roleType !== "0" && agentApproval) {
       documentStatus.agentApproval = {
         status: agentApproval,
         updatedAt: Date.now(),
@@ -212,7 +219,6 @@ exports.updateDocumentStatus = async (req, res) => {
     }
     await documentStatus.save();
 
-    const policy = await Policy.findById(policyId);
     if (!policy) {
       return res.status(404).json({
         message: "Policy not found",

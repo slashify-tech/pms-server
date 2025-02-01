@@ -59,7 +59,7 @@ exports.topPerformerLists = async (req, res) => {
     const selectedYear = year ? parseInt(year) : new Date().getFullYear();
     const matchConditions = {
       policyType: "MB",
-      isDisabled: false, 
+      isDisabled: false,
       policyStatus: { $in: ["approved"] },
     };
 
@@ -80,31 +80,31 @@ exports.topPerformerLists = async (req, res) => {
       const endMonthIndex = monthMapping[endMonth];
 
       if (startMonthIndex !== undefined && endMonthIndex !== undefined) {
-        matchConditions.createdAt = {
-          $gte: new Date(
-            `${selectedYear}-0${startMonthIndex + 1}-01T00:00:00.000Z`
-          ),
-          $lte: new Date(
-            `${selectedYear}-0${endMonthIndex + 1}-31T23:59:59.999Z`
-          ),
-        };
+        if (startMonthIndex === endMonthIndex) {
+          // Case when both months are the same
+          matchConditions.createdAt = {
+            $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
+            $lte: new Date(`${selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`),
+          };
+        } else {
+          matchConditions.createdAt = {
+            $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
+            $lte: new Date(`${selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`),
+          };
+        }
       }
     } else if (startMonth) {
       const startMonthIndex = monthMapping[startMonth];
-
       if (startMonthIndex !== undefined) {
         matchConditions.createdAt = {
-          $gte: new Date(
-            `${selectedYear}-0${startMonthIndex + 1}-01T00:00:00.000Z`
-          ),
+          $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
         };
       }
     } else if (endMonth) {
       const endMonthIndex = monthMapping[endMonth];
-
       if (endMonthIndex !== undefined) {
         matchConditions.createdAt = {
-          $lte: new Date(`${year}-0${endMonthIndex + 1}-31T23:59:59.999Z`),
+          $lte: new Date(`${selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`),
         };
       }
     }
