@@ -102,14 +102,12 @@ exports.addAgent = async (req, res) => {
     const {
       email,
       password,
-      confirmPassword,
       contactNumber,
-      agentId,
       agentName,
     } = agentData;
 
     if (id) {
-      const existingAgent = await User.findById(id);
+      const existingAgent = await User.findById(id)
 
       if (!existingAgent) {
         return res.status(404).json({ message: "Agent not found for update" });
