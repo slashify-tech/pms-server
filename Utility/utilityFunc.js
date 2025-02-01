@@ -16,7 +16,7 @@ const encryptText = (text) => {
  * @returns {string} - The decrypted text.
  */
 const decryptText = (encryptedText) => {
-    const bytes = CryptoJS.AES.decrypt(encryptedText, secretKey);
+    const bytes = CryptoJS.AES.decrypt(encryptedText, secretKey)
     return bytes.toString(CryptoJS.enc.Utf8);
 };
  const encodeEmail = (email) => {
