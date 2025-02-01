@@ -9,7 +9,7 @@ const json2csv = require("json2csv").parse;
 dotenv.config();
 
 exports.signinController = async (req, res) => {
-  const { email, password } = req.body
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: "Invalid Field" });
@@ -30,7 +30,7 @@ exports.signinController = async (req, res) => {
         id: existingUser._id,
       },
       process.env.SECRET_KEY,
-     { expiresIn: process.env.TOKEN_EXPIRY }
+      { expiresIn: process.env.TOKEN_EXPIRY }
     );
 
     res.status(200).json({ token, user: existingUser });
@@ -97,15 +97,10 @@ exports.addAgent = async (req, res) => {
   try {
     const agentData = req.body;
     const { id } = req.query;
-    const {
-      email,
-      password,
-      contactNumber,
-      agentName,
-    } = agentData;
+    const { email, password, contactNumber, agentName } = agentData;
 
     if (id) {
-      const existingAgent = await User.findById(id)
+      const existingAgent = await User.findById(id);
 
       if (!existingAgent) {
         return res.status(404).json({ message: "Agent not found for update" });
@@ -142,18 +137,17 @@ exports.addAgent = async (req, res) => {
       } else {
         return res.status(404).json({ message: "Agent not found" });
       }
-    } 
+    }
 
-      const newAgent = new User({
-        ...agentData,
-        password: encryptText(password),
-      });
+    const newAgent = new User({
+      ...agentData,
+      password: encryptText(password),
+    });
 
-      await newAgent.save();
-      await sendAgentCredEmail(email, password, agentName);
+    await newAgent.save();
+    await sendAgentCredEmail(email, password, agentName);
 
-      return res.status(201).json({ message: "Agent added successfully" });
- 
+    return res.status(201).json({ message: "Agent added successfully" });
   } catch (err) {
     console.log("Error saving agent data:", err);
     res
@@ -239,7 +233,6 @@ exports.getUserDataByBrand = async (req, res) => {
   }
 };
 
-
 exports.downloadCsv = async (req, res) => {
   try {
     const data = await User.find({});
@@ -275,7 +268,6 @@ exports.downloadCsv = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
 
 exports.emailUpdate = async (req, res) => {
   const { id, email, password } = req.body;
@@ -330,6 +322,10 @@ exports.passwordUpdate = async (req, res) => {
     }
 
     userData.password = encryptText(password);
+    if (userData.password !== encryptText(password)) {
+      return res.status(404).send({ message: "Incorrect password" });
+    }
+
     await userData.save();
 
     return res.status(200).send({
