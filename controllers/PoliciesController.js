@@ -14,27 +14,29 @@ const {
 } = require("../helper/emailFunction");
 const { getNextPolicyId } = require("../helper/countreunvtion");
 const Teams = require("../model/TeamsModel");
+const mbClassModel = require("../model/mbDataModel");
 
 exports.policyFormData = async (req, res) => {
   try {
     const policyData = req.body;
     const { vehicleEngineNumber, vehicleRegNumber, email } = policyData;
 
-    const duplicateVehicleEngineNumber = await Policy.findOne({ vehicleEngineNumber });
+    const duplicateVehicleEngineNumber = await Policy.findOne({
+      vehicleEngineNumber,
+    });
     if (duplicateVehicleEngineNumber) {
       return res.status(400).json({
         message: "Vehicle registration number already exists",
       });
     }
-    
-    
+
     const duplicateRegNumber = await Policy.findOne({ vehicleRegNumber });
     if (duplicateRegNumber) {
       return res.status(400).json({
         message: "Vehicle registration number already exists",
       });
     }
-    
+
     const duplicateEmail = await Policy.findOne({ email });
     if (duplicateEmail) {
       return res.status(400).json({
@@ -64,7 +66,6 @@ exports.policyFormData = async (req, res) => {
   }
 };
 
-
 exports.editPolicy = async (req, res) => {
   try {
     const { id } = req.params;
@@ -77,7 +78,9 @@ exports.editPolicy = async (req, res) => {
         _id: { $ne: id }, // Exclude the current policy being updated
       });
       if (duplicateEngineNumber) {
-        return res.status(400).json({ message: "Vehicle engine number already exists" });
+        return res
+          .status(400)
+          .json({ message: "Vehicle engine number already exists" });
       }
     }
 
@@ -87,7 +90,9 @@ exports.editPolicy = async (req, res) => {
         _id: { $ne: id }, // Exclude the current policy being updated
       });
       if (duplicateRegNumber) {
-        return res.status(400).json({ message: "Vehicle registration number already exists" });
+        return res
+          .status(400)
+          .json({ message: "Vehicle registration number already exists" });
       }
     }
 
@@ -111,14 +116,14 @@ exports.editPolicy = async (req, res) => {
       return res.status(404).json({ message: "Policy not found" });
     }
 
-    res.status(200).json({ message: "Policy updated successfully", data: updatedPolicy });
+    res
+      .status(200)
+      .json({ message: "Policy updated successfully", data: updatedPolicy });
   } catch (err) {
     console.error("Error updating policy data:", err);
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
-
-
 
 exports.deletePolicy = async (req, res) => {
   try {
@@ -154,9 +159,9 @@ exports.getAllPolicy = async (req, res) => {
 
     if (search) {
       query.$or = [
-        { policyId: { $regex: search, $options: 'i' } }, // Case-insensitive search
-        { vehicleEngineNumber: { $regex: search, $options: 'i' } },
-        { vehicleRegNumber: { $regex: search, $options: 'i' } },
+        { policyId: { $regex: search, $options: "i" } }, // Case-insensitive search
+        { vehicleEngineNumber: { $regex: search, $options: "i" } },
+        { vehicleRegNumber: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -184,7 +189,6 @@ exports.getAllPolicy = async (req, res) => {
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
-
 
 exports.getMgPolicies = async (req, res) => {
   try {
@@ -334,12 +338,11 @@ exports.updatePolicyStatus = async (req, res) => {
       policy.isCancelReq = "approvedReq";
       await policy.save();
 
-      return res.status(200).json({ 
-        message: "Cancellation request approved.", 
-        isCancelReq: policy.isCancelReq 
+      return res.status(200).json({
+        message: "Cancellation request approved.",
+        isCancelReq: policy.isCancelReq,
       });
     }
-
 
     // Handle rejection case
     if (type === "rejected") {
@@ -425,16 +428,13 @@ exports.updatePolicyStatus = async (req, res) => {
 exports.getPendingPolicy = async (req, res) => {
   try {
     const { page, limit, manufacturer } = req.query; // Default values for page and limit
-    const pageNumber = parseInt(page) || 1;  // Ensure it's a valid number
-    const pageSize = parseInt(limit) || 10;  // Ensure it's a valid number
+    const pageNumber = parseInt(page) || 1; // Ensure it's a valid number
+    const pageSize = parseInt(limit) || 10; // Ensure it's a valid number
     const startIndex = (pageNumber - 1) * pageSize;
-    
-  const query = { 
-  $or: [
-    { policyStatus: "yetToApproved" },
-    { isCancelReq: "reqCancel" }
-  ]
-};
+
+    const query = {
+      $or: [{ policyStatus: "yetToApproved" }, { isCancelReq: "reqCancel" }],
+    };
 
     if (manufacturer) {
       query.vehicleManufacturer = manufacturer;
@@ -465,7 +465,6 @@ exports.getPendingPolicy = async (req, res) => {
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
-
 
 exports.getPolicyById = async (req, res) => {
   const { id } = req.params;
@@ -613,13 +612,10 @@ exports.downloadPolicyCsv = async (req, res) => {
   try {
     const { vehicleManufacturer } = req.query;
     console.log(vehicleManufacturer, "barnd");
-    let query = { 
-      $and: [
-        { isDisabled: { $ne: true } }, 
-        { policyStatus: 'approved' }
-      ]
+    let query = {
+      $and: [{ isDisabled: { $ne: true } }, { policyStatus: "approved" }],
     };
-    
+
     if (vehicleManufacturer) {
       query.vehicleManufacturer = vehicleManufacturer;
     }
@@ -633,7 +629,8 @@ exports.downloadPolicyCsv = async (req, res) => {
       "Gst Number": policy.customerGstNumber || "",
       "Vehicle Manufacturer": policy.vehicleManufacturer || "",
       "Vehicle Model": policy.vehicleModel || "",
-      Variant: policy.variant || "",
+      Class: policy.mgClass || "",
+      "Model/Variant": policy.mgModel || "",
       "Vehicle Id Number": policy.vehicleIdNumber || "",
       "Vehicle Reg Number": policy.vehicleRegNumber || "",
       "Ex-showroom Price": policy.exshowroomPrice || "",
@@ -650,6 +647,10 @@ exports.downloadPolicyCsv = async (req, res) => {
       "Total Price": policy.totalPrice || "",
       "Current Status": policy.policyStatus || "",
       "Transaction Id": policy.transactionId || "",
+      "Lead Name": policy.teams.leadName || "",
+      Location: policy.teams.location || "",
+      "Employee Name": policy.teams.employeeName || "",
+      "Team Name": policy.teams.teamName || "",
     }));
 
     const csvDataString = json2csv(csvData, {
@@ -661,6 +662,8 @@ exports.downloadPolicyCsv = async (req, res) => {
         "Customer Gst Number",
         "Vehicle Manufacturer",
         "Vehicle Model",
+        "Class",
+        "Model/Variant",
         "Variant",
         "Vehicle Id Number",
         "Vehicle Reg Number",
@@ -678,6 +681,10 @@ exports.downloadPolicyCsv = async (req, res) => {
         "Total Price",
         "Current Status",
         "Transaction Id",
+        "Lead Name",
+        "Location",
+        "Employee Name",
+        "Team Name",
       ],
     });
 
@@ -708,7 +715,6 @@ exports.downloadPolicyCsv = async (req, res) => {
   }
 };
 
-
 exports.cancelFromAgentRequest = async (req, res) => {
   const { id } = req.params;
 
@@ -717,18 +723,23 @@ exports.cancelFromAgentRequest = async (req, res) => {
       const policy = await Policy.findById(id);
 
       if (!policy) {
-        return res.status(404).json({ message: 'Policy not found' });
+        return res.status(404).json({ message: "Policy not found" });
       }
 
-      policy.isCancelReq = "reqCancel"; 
+      policy.isCancelReq = "reqCancel";
       await policy.save();
 
-      return res.status(200).json({ message: 'Cancellation request submitted successfully', policy });
+      return res.status(200).json({
+        message: "Cancellation request submitted successfully",
+        policy,
+      });
     } else {
-      return res.status(400).json({ message: 'Policy ID is required' });
+      return res.status(400).json({ message: "Policy ID is required" });
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -741,9 +752,9 @@ exports.policyResubmit = async (req, res) => {
     if (!policy) {
       return res.status(404).json({ message: "policy not found" });
     }
-    policy.policyStatus = "yetToApproved"
+    policy.policyStatus = "yetToApproved";
     await policy.save();
-      
+
     return res
       .status(200)
       .json({ message: "policy fetched successfully", policy });
@@ -752,7 +763,6 @@ exports.policyResubmit = async (req, res) => {
     console.log(error);
   }
 };
-
 
 exports.policyResubmit = async (req, res) => {
   const { policyId } = req.query;
@@ -765,26 +775,17 @@ exports.policyResubmit = async (req, res) => {
     }
 
     policy.policyStatus = "yetToApproved";
-    await policy.save(); 
+    await policy.save();
 
     return res.status(200).json({
       message: "Policy updated successfully",
-      policy, 
+      policy,
     });
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     return res.status(500).json({ message: "Something went wrong", error });
   }
 };
-
-
-
-
-
-
-
-
-
 
 exports.getPolicies = async (req, res) => {
   const { policyStatus, search = "", page = 1, limit = 10, userId } = req.query;
@@ -815,7 +816,7 @@ exports.getPolicies = async (req, res) => {
     // Build the aggregation pipeline
     const policiesPipeline = [
       { $match: filters }, // Match policies based on filters
-     
+
       { $sort: { createdAt: -1 } }, // Sort by creation date (newest first)
       { $skip: skip }, // Skip documents for pagination
       { $limit: limitNum }, // Limit the number of documents per page
@@ -844,6 +845,101 @@ exports.getPolicies = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+};
+
+exports.getSalesData = async (req, res) => {
+  const { year, month, location, salesType } = req.query;
+
+  const matchFilter = {
+    isDisabled: false,
+    policyType: "MB",
+  };
+
+  if (year) {
+    const startOfYear = new Date(`${year}-01-01`);
+    const endOfYear = new Date(`${year}-12-31`);
+    matchFilter.createdAt = { $gte: startOfYear, $lte: endOfYear };
+  }
+
+  if (month) {
+    const startOfMonth = new Date(`${year}-${month}-01`);
+    const endOfMonth = new Date(`${year}-${month}-31`);
+    matchFilter.createdAt = { $gte: startOfMonth, $lte: endOfMonth };
+  }
+  if (location) {
+    matchFilter["teams.location"] = location;
+  }
+
+  const salesData = await Policy.aggregate([
+    { $match: matchFilter },
+    {
+      $group: {
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+        },
+        grossSales: { $sum: "$totalPrice" },
+        netSales: { $sum: "$price" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        year: "$_id.year",
+        month: "$_id.month",
+        grossSales: 1,
+        netSales: 1,
+      },
+    },
+    { $sort: { year: 1, month: 1 } },
+  ]);
+  let filteredSalesData;
+  if (salesType === "gross") {
+    filteredSalesData = salesData.map(({ year, month, grossSales }) => ({
+      year,
+      month,
+      sales: grossSales,
+    }));
+  } else if (salesType === "net") {
+    filteredSalesData = salesData.map(({ year, month, netSales }) => ({
+      year,
+      month,
+      sales: netSales,
+    }));
+  }
+
+  const data = {
+    salesData: filteredSalesData,
+  };
+
+  return res
+    .status(200)
+    .json({ status: 200, data, message: "Sales data retrieved successfully" });
+};
+
+exports.getMbclassAndModel = async (req, res) => {
+  try {
+    const data = await mbClassModel.find({});
+    return res.status(200).json({ message: "Data fetched", data });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+};
+exports.addNewModel = async (req, res) => {
+  const { mbModel, mbClass } = req.query;
+  try {
+    const newModel = new mbClassModel({
+      mbModel,
+      mbClass,
+    });
+
+    const savedModel = await newModel.save();
+    return res.status(200).json({ message: "Model Saved", data: savedModel });
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Something went wrong", error });
   }
 };

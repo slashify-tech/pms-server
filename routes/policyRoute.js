@@ -8,14 +8,24 @@ const {
   editPolicy,
   policyResubmit,
   getPolicies,
+  getSalesData,
+  getMbclassAndModel,
+  addNewModel,
 } = require("../controllers/PoliciesController");
+const { authCheck } = require("../middleware/Auth");
 
-router.post("/add-policies", policyFormData);
-router.post("/approval", updatePolicyStatus);
-router.patch("/policy-resubmit", policyResubmit);
-router.patch("/edit-policies/:id", editPolicy);
-router.get("/policyById/:id", getPolicyById);
-router.get("/policy", getPolicies);
-router.get("/filtered-policyById/:id", getFilteredPolicyById);
+router.post("/add-policies", authCheck, policyFormData);
+router.post("/add-policies", authCheck, policyFormData);
+router.post("/new-model", authCheck, addNewModel);
+
+router.patch("/policy-resubmit", authCheck, policyResubmit);
+router.patch("/edit-policies/:id", authCheck, editPolicy);
+
+router.get("/policyById/:id", authCheck, getPolicyById);
+router.get("/policy", authCheck, getPolicies);
+router.get("/filtered-policyById/:id", authCheck, getFilteredPolicyById);
+router.get("/sales-overview", authCheck, getSalesData);
+router.get("/mb-class-data", authCheck, getMbclassAndModel);
+
 
 module.exports = router;

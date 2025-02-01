@@ -3,8 +3,12 @@ const router = express.Router();
 const {
   getTeamData,
   updateTeamData,
+  topPerformerLists,
 } = require("../controllers/teamDataController");
+const { authCheck } = require("../middleware/Auth");
 
-router.get("/getTeams", getTeamData);
-router.patch("/update-team", updateTeamData);
+router.get("/getTeams", authCheck,  getTeamData);
+router.patch("/update-team",  authCheck, updateTeamData);
+router.get("/top-performer-lists",  authCheck, topPerformerLists);
+
 module.exports = router;

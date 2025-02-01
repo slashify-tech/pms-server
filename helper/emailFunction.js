@@ -57,7 +57,7 @@ const getEmailTemplate = (
         <div style="text-align: center;">
           <div style="${styles}">
             <p>Dear ${userName},</p>
-            <p>We are excited to inform you that your account has been successfully created in our policy portal.</p>
+            <p>We are excited to inform you that your account has been successfully created in 360 policy portal.</p>
             <p>Account Details:</p>
           
             <p>Here are your login details:</p>

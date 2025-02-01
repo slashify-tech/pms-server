@@ -6,13 +6,18 @@ const {
   getUsersData,
   getUserById,
   getUserDataById,
+  passwordUpdate,
+  emailUpdate,
 } = require("../controllers/UserController");
 const { authCheck } = require("../middleware/Auth");
 
+router.put("/cancel-request/:id", authCheck, cancelFromAgentRequest);
 router.post("/auth", signinController);
-router.put("/cancel-request/:id", cancelFromAgentRequest);
+router.patch("/password-update", authCheck, passwordUpdate);
+router.patch("/email-update", authCheck, emailUpdate);
 
 router.get("/getUserData", authCheck, getUsersData);
-router.get("/getUserDataById/:userId", getUserById);
-router.get("/getAllUserDataById/:userId", getUserDataById);
+router.get("/getUserDataById/:userId", authCheck, getUserById);
+router.get("/getAllUserDataById/:userId", authCheck, getUserDataById);
+
 module.exports = router;

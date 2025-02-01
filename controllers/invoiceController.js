@@ -14,7 +14,6 @@ exports.addInvoice = async (req, res) => {
     if(role === "1"){
        invoiceStatus = "approved"
     }
-    // Generate a unique invoiceId using Counter collection
     const counter = await InvoiceCounter.findOneAndUpdate(
       { name: "invoiceId" },
       { $inc: { count: 1 } },

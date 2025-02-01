@@ -18,7 +18,7 @@ const renderEmailTemplate = async (data) => {
     const template = fs.readFileSync(templatePath, 'utf-8');
     return ejs.render(template, {
       data: data,
-      date: formatIsoDate(data.createdAt)
+      date: formatIsoDate(data?.createdAt)
       
     });
   } catch (error) {
@@ -52,16 +52,16 @@ const generatePdf = async (html, pdfType) => {
   let browser;
   try {
     // Launch Puppeteer with error-resilient options
-    // browser = await puppeteer.launch({
-    //   headless: true,
-    //   args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add sandbox flags for restricted environments
-    //   timeout: 60000, // Increase timeout to 60 seconds
-    // });
-     browser = await puppeteer.launch({  //production code for aws ec2 
-      executablePath: '/usr/bin/chromium-browser', // Path to system-installed Chromium
+    browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add sandbox flags for restricted environments
+      timeout: 60000, // Increase timeout to 60 seconds
     });
+    //  browser = await puppeteer.launch({  //production code for aws ec2 
+    //   executablePath: '/usr/bin/chromium-browser', // Path to system-installed Chromium
+    //   headless: true,
+    //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    // });
     
 
     const page = await browser.newPage();

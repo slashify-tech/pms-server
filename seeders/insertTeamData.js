@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
-const Teams = require('../model/Teams.model')
 const TeamData = require('../TeamData');
 const connectDb = require('../db/mongoConnection');
+const Teams = require('../model/TeamsModel');
 
 async function insertTeamData() {
   try {
     await connectDb();
 
-    await Teams.insertMany(TeamData);
+    await Teams .insertMany(TeamData);
     console.log('teamdata inserted successfully!');
   } catch (error) {
     console.error('Error inserting data:', error);

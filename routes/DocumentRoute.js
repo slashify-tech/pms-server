@@ -7,14 +7,13 @@ const {
   sendPolicyPdf,
   CustomerApproval,
 } = require("../controllers/documentController");
+const { authCheck } = require('../middleware/Auth');
 
-router.patch("/document-status-update", updateDocumentStatus);
-router.patch("/customer-document-approval", sendPolicyPdf); // send by admin
+router.patch("/document-status-update", authCheck, updateDocumentStatus);
+router.patch("/customer-document-approval", authCheck, sendPolicyPdf); 
+router.patch("/customer-approval", authCheck, CustomerApproval); 
 
-router.patch("/customer-approval", CustomerApproval); //approved by customer
-
-router.get("/all-document", getDocumentData);
-
-router.get("/agent-document-approval", getStatusRequestForAgent);
+router.get("/all-document", authCheck, getDocumentData);
+router.get("/agent-document-approval", authCheck, getStatusRequestForAgent);
 
 module.exports = router;

@@ -25,14 +25,14 @@ const teamsSchema = mongoose.Schema({
 
 
 const policySchema = mongoose.Schema(
-  // {
-  //   policyType: {
-  //     type: String,
-  //     required: true,
-  //     enum: ["MG", "MB"],
-  //     default: "MG",
-  //   },
-{
+  {
+    policyType: {
+      type: String,
+      required: true,
+      enum: ["MG", "MB"],
+      default: "MB",
+    },
+
     customerName: { type: String, required: false },
     panNumber:{type: String, required: true},
     address: { type: String, required: false },
@@ -40,6 +40,8 @@ const policySchema = mongoose.Schema(
     contactNumber: { type: String, required: false },
     customerGstNumber: { type: String, required: false },
     vehicleManufacturer: { type: String, required: false },
+    mbModel: { type: String, required: false },
+    mbModel: { type: String, required: false },
     vehicleModel: { type: String, required: false },
     vehicleIdNumber: { type: String, required: false },
     vehicleEngineNumber: {type: String, required: false},
@@ -48,11 +50,8 @@ const policySchema = mongoose.Schema(
     fuelType: { type: String, required: false },
     typeOfPackage: { type: String, required: false },
     manufacturingYear: { type: String, required: false },
-
-
     vehiclePurchaseDate: { type: String, required: false },
     vehicleFirstRegDate: { type: String, required: false },
-
     exshowroomPrice: { type: String, required: false },
     odometerReading: { type: String, required: false },
     coolingOffPeriod: { type: String, required: false },
@@ -66,9 +65,7 @@ const policySchema = mongoose.Schema(
     cgst: { type: Number, required: false },
     totalPrice: { type: Number, required: false },
     totalPriceInWords: { type: String, required: false },
-
     price: { type: Number, required: false },
-    variant: { type: String, required: false },
     transactionId: { type: String, required: false },
     teams: teamsSchema,
 
