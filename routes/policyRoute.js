@@ -12,6 +12,7 @@ const {
   getMbclassAndModel,
   addNewModel,
   getExpiredWarrantyCount,
+  getExpiredPolicy
 } = require("../controllers/PoliciesController");
 const { authCheck } = require("../middleware/Auth");
 
@@ -28,6 +29,8 @@ router.get("/filtered-policyById/:id", authCheck, getFilteredPolicyById);
 router.get("/sales-overview", authCheck, getSalesData);
 router.get("/expired-policy-data", authCheck, getExpiredWarrantyCount);
 router.get("/mb-class-data", authCheck, getMbclassAndModel);
+router.get("/expired-policy-lists", authCheck, getExpiredPolicy);
+
 
 
 module.exports = router;

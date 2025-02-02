@@ -143,14 +143,23 @@ exports.deletePolicy = async (req, res) => {
 exports.getAllPolicy = async (req, res) => {
   try {
     const { page, limit, manufacturer, search } = req.query;
-    const pageNumber = parseInt(page);
-    const pageSize = parseInt(limit);
+    const pageNumber = parseInt(page) || 1;
+    const pageSize = parseInt(limit) || 10;
     const startIndex = (pageNumber - 1) * pageSize;
     const endIndex = pageNumber * pageSize;
+
+    // Get today's date in YYYY-MM-DD format
+    const todayUTC = new Date();
+    const todayISTEnd = new Date(todayUTC.getTime());
+    todayISTEnd.setHours(23, 59, 59, 999);
+    const todayFormatted = todayISTEnd.toISOString().split("T")[0];
 
     const query = {
       isDisabled: { $ne: true },
       policyStatus: "approved",
+      extWarrantyEndDate: {
+        $gte: todayFormatted, 
+      },
     };
 
     if (manufacturer) {
@@ -472,16 +481,24 @@ exports.getPolicyById = async (req, res) => {
   const pageNumber = parseInt(page);
   const pageSize = parseInt(limit);
   const startIndex = (pageNumber - 1) * pageSize;
-
+  const todayUTC = new Date();
+  const todayISTEnd = new Date(todayUTC.getTime());
+  todayISTEnd.setHours(23, 59, 59, 999);
+  const todayFormatted = todayISTEnd.toISOString().split("T")[0];
   try {
     const totalPoliciesCount = await Policy.countDocuments({
       $or: [{ userId: id }, { _id: id }],
       policyStatus: { $ne: "yetToApproved" },
+      extWarrantyEndDate: {
+        $gte: todayFormatted, 
+      },
     });
 
     const data = await Policy.find({
       $or: [{ userId: id }, { _id: id }],
-      // policyStatus: { $ne: "yetToApproved" },
+      extWarrantyEndDate: {
+        $gte: todayFormatted, 
+      },
     })
       .skip(startIndex)
       .limit(pageSize);
@@ -511,7 +528,7 @@ exports.getPolicyById = async (req, res) => {
 
 exports.getFilteredPolicyById = async (req, res) => {
   const { id } = req.params;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, isDisabled } = req.query;
   const pageNumber = parseInt(page);
   const pageSize = parseInt(limit);
   const startIndex = (pageNumber - 1) * pageSize;
@@ -519,12 +536,12 @@ exports.getFilteredPolicyById = async (req, res) => {
   try {
     const totalPoliciesCount = await Policy.countDocuments({
       $or: [{ userId: id }, { _id: id }],
-      // policyStatus: { $ne: "yetToApproved" },
+      isDisabled: isDisabled,
     });
 
     const data = await Policy.find({
       $or: [{ userId: id }, { _id: id }],
-      // policyStatus: { $nin: ["yetToApproved", "rejected"] },
+      isDisabled: isDisabled,
     })
       .sort({ createdAt: -1 })
       .skip(startIndex)
@@ -950,14 +967,9 @@ exports.addNewModel = async (req, res) => {
 exports.getExpiredWarrantyCount = async (req, res) => {
   try {
     const todayUTC = new Date();
-
     const todayISTEnd = new Date(todayUTC.getTime());
     todayISTEnd.setHours(23, 59, 59, 999);
-
     const todayFormatted = todayISTEnd.toISOString().split('T')[0];
-
-    console.log(new Date(todayFormatted), "test");
-
     const expiredCountResult = await Policy.aggregate([
       {
         $match: {
@@ -991,5 +1003,81 @@ exports.getExpiredWarrantyCount = async (req, res) => {
       message: "Something went wrong",
       error: error.message,
     });
+  }
+};
+
+
+
+exports.getExpiredPolicy = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  const pageNumber = parseInt(page);
+  const pageSize = parseInt(limit);
+  const startIndex = (pageNumber - 1) * pageSize;
+
+  try {
+    const todayUTC = new Date();
+    todayUTC.setHours(23, 59, 59, 999); 
+
+    const expiredCountResult = await Policy.aggregate([
+      {
+        $match: {
+          $expr: {
+            $lt: [
+              {
+                $dateFromString: {
+                  dateString: "$extWarrantyEndDate",
+                  format: "%d-%m-%Y",
+                },
+              },
+              todayUTC,
+            ],
+          },
+        },
+      },
+      { $count: "expiredCount" },
+    ]);
+
+    const totalPoliciesCount = expiredCountResult[0]?.expiredCount || 0;
+     console.log(todayUTC)
+    const expiredPolicies = await Policy.aggregate([
+      {
+        $addFields: {
+          parsedDate: {
+            $dateFromString: {
+              dateString: "$extWarrantyEndDate",
+              format: "%d-%m-%Y",
+            },
+          },
+        },
+      },
+      {
+        $match: {
+          parsedDate: { $lt: todayUTC },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: startIndex },
+      { $limit: pageSize },
+    ]);
+
+    if (!expiredPolicies || expiredPolicies.length === 0) {
+      return res.status(404).json({ message: "No expired policies available" });
+    }
+
+    const result = {
+      data: expiredPolicies,
+      currentPage: pageNumber,
+      hasNextPage: startIndex + expiredPolicies.length < totalPoliciesCount,
+      hasPreviousPage: pageNumber > 1,
+      nextPage: startIndex + expiredPolicies.length < totalPoliciesCount ? pageNumber + 1 : null,
+      previousPage: pageNumber > 1 ? pageNumber - 1 : null,
+      totalPagesCount: Math.ceil(totalPoliciesCount / pageSize),
+      totalPoliciesCount,
+    };
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error fetching expired policies:", err);
+    res.status(500).json({ message: "Failed to fetch policy data" });
   }
 };
