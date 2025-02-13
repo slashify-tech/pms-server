@@ -148,18 +148,13 @@ exports.getAllPolicy = async (req, res) => {
     const startIndex = (pageNumber - 1) * pageSize;
     const endIndex = pageNumber * pageSize;
 
-    // Get today's date in YYYY-MM-DD format
+    // Get today's date in YYYY-MM-DD format (Start of the day)
     const todayUTC = new Date();
-    const todayISTEnd = new Date(todayUTC.getTime());
-    todayISTEnd.setHours(23, 59, 59, 999);
-    const todayFormatted = todayISTEnd.toISOString().split("T")[0];
-
+    todayUTC.setHours(0, 0, 0, 0);
+    
     const query = {
       isDisabled: { $ne: true },
       policyStatus: "approved",
-      extWarrantyEndDate: {
-        $gte: todayFormatted, 
-      },
     };
 
     if (manufacturer) {
@@ -168,28 +163,66 @@ exports.getAllPolicy = async (req, res) => {
 
     if (search) {
       query.$or = [
-        { policyId: { $regex: search, $options: "i" } }, // Case-insensitive search
+        { policyId: { $regex: search, $options: "i" } }, 
         { vehicleEngineNumber: { $regex: search, $options: "i" } },
         { vehicleRegNumber: { $regex: search, $options: "i" } },
       ];
     }
 
-    const totalPoliciesCount = await Policy.countDocuments(query);
+    // Aggregation pipeline to convert string date to Date format
+    const policiesAggregation = await Policy.aggregate([
+      {
+        $addFields: {
+          extWarrantyEndDateConverted: {
+            $dateFromString: {
+              dateString: "$extWarrantyEndDate",
+              format: "%d-%m-%Y",
+            },
+          },
+        },
+      },
+      {
+        $match: {
+          ...query,
+          extWarrantyEndDateConverted: { $gte: todayUTC }, 
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: startIndex },
+      { $limit: pageSize },
+    ]);
 
-    const policies = await Policy.find(query)
-      .sort({ createdAt: -1 })
-      .limit(pageSize)
-      .skip(startIndex);
+    const totalPoliciesCount = await Policy.aggregate([
+      {
+        $addFields: {
+          extWarrantyEndDateConverted: {
+            $dateFromString: {
+              dateString: "$extWarrantyEndDate",
+              format: "%d-%m-%Y",
+            },
+          },
+        },
+      },
+      {
+        $match: {
+          ...query,
+          extWarrantyEndDateConverted: { $gte: todayUTC },
+        },
+      },
+      { $count: "total" },
+    ]);
+
+    const totalCount = totalPoliciesCount.length > 0 ? totalPoliciesCount[0].total : 0;
 
     const result = {
-      data: policies,
+      data: policiesAggregation,
       currentPage: pageNumber,
-      hasNextPage: endIndex < totalPoliciesCount,
+      hasNextPage: endIndex < totalCount,
       hasPreviousPage: pageNumber > 1,
-      nextPage: endIndex < totalPoliciesCount ? pageNumber + 1 : null,
+      nextPage: endIndex < totalCount ? pageNumber + 1 : null,
       previousPage: pageNumber > 1 ? pageNumber - 1 : null,
-      totalPagesCount: Math.ceil(totalPoliciesCount / pageSize),
-      totalPoliciesCount,
+      totalPagesCount: Math.ceil(totalCount / pageSize),
+      totalPoliciesCount: totalCount,
     };
 
     res.status(200).json(result);
@@ -198,6 +231,7 @@ exports.getAllPolicy = async (req, res) => {
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
+
 
 exports.getMgPolicies = async (req, res) => {
   try {
@@ -526,6 +560,7 @@ exports.getPolicyById = async (req, res) => {
   }
 };
 
+
 exports.getFilteredPolicyById = async (req, res) => {
   const { id } = req.params;
   const { page = 1, limit = 10, isDisabled } = req.query;
@@ -534,15 +569,22 @@ exports.getFilteredPolicyById = async (req, res) => {
   const startIndex = (pageNumber - 1) * pageSize;
 
   try {
-    const totalPoliciesCount = await Policy.countDocuments({
-      $or: [{ userId: id }, { _id: id }],
-      isDisabled: isDisabled,
-    });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+    const objectId = new mongoose.Types.ObjectId(id);
 
-    const data = await Policy.find({
-      $or: [{ userId: id }, { _id: id }],
-      isDisabled: isDisabled,
-    })
+    const query = {
+      $or: [{ userId: objectId }, { _id: objectId }],
+    };
+
+    if (isDisabled !== undefined) {
+      query.isDisabled = isDisabled;
+    }
+
+    const totalPoliciesCount = await Policy.countDocuments(query);
+
+    const data = await Policy.find(query)
       .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(pageSize);
