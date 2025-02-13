@@ -481,24 +481,24 @@ exports.getPolicyById = async (req, res) => {
   const pageNumber = parseInt(page);
   const pageSize = parseInt(limit);
   const startIndex = (pageNumber - 1) * pageSize;
-  const todayUTC = new Date();
-  const todayISTEnd = new Date(todayUTC.getTime());
-  todayISTEnd.setHours(23, 59, 59, 999);
-  const todayFormatted = todayISTEnd.toISOString().split("T")[0];
+  // const todayUTC = new Date();
+  // const todayISTEnd = new Date(todayUTC.getTime());
+  // todayISTEnd.setHours(23, 59, 59, 999);
+  // const todayFormatted = todayISTEnd.toISOString().split("T")[0];
   try {
     const totalPoliciesCount = await Policy.countDocuments({
       $or: [{ userId: id }, { _id: id }],
       policyStatus: { $ne: "yetToApproved" },
-      extWarrantyEndDate: {
-        $gte: todayFormatted, 
-      },
+      // extWarrantyEndDate: {
+      //   $gte: todayFormatted, 
+      // },
     });
 
     const data = await Policy.find({
       $or: [{ userId: id }, { _id: id }],
-      extWarrantyEndDate: {
-        $gte: todayFormatted, 
-      },
+      // extWarrantyEndDate: {
+      //   $gte: todayFormatted, 
+      // },
     })
       .skip(startIndex)
       .limit(pageSize);

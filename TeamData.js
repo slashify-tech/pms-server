@@ -33,7 +33,7 @@ const teamData = [
     "location": "Hyderabad SR",
     "leadName": "Ajith ( Team Lead )",
     "teamName": "Sales Consultants",
-    "employeeName": "VINAY"
+    "employeeName": "SRIKAR"
   },
   {
     "location": "Hyderabad SR",
@@ -127,25 +127,31 @@ const teamData = [
   },
   {
     "location": "Hyderabad SR",
-    "leadName": "Amith ( Team Lead )",
+    "leadName": "Kaladhar ( Team Lead )",
+    "teamName": "Sales Consultants",
+    "employeeName": "ADIL"
+  },
+  {
+    "location": "Hyderabad SR",
+    "leadName": "Elan ( Team Lead )",
+    "teamName": "Sales Consultants",
+    "employeeName": "SHIVRAJ"
+  },
+  {
+    "location": "Hyderabad SR",
+    "leadName": "Santhosh Badavath ( Team Lead )",
     "teamName": "Sales Consultants",
     "employeeName": "UMESH"
   },
   {
     "location": "Hyderabad SR",
-    "leadName": "Amith ( Team Lead )",
-    "teamName": "Sales Consultants",
-    "employeeName": "SANTHOSH BADAVATH"
-  },
-  {
-    "location": "Hyderabad SR",
-    "leadName": "Amith ( Team Lead )",
+    "leadName": "Santhosh Badavath ( Team Lead )",
     "teamName": "Sales Consultants",
     "employeeName": "SAMSON"
   },
   {
     "location": "Hyderabad SR",
-    "leadName": "Amith ( Team Lead )",
+    "leadName": "Santhosh Badavath ( Team Lead )",
     "teamName": "Sales Consultants",
     "employeeName": "GOWTHAM"
   },
@@ -165,73 +171,79 @@ const teamData = [
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Sathwika"
+    "employeeName": "SATHWIKA"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Sudheer Kumar"
+    "employeeName": "SUDHEER KUMAR"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Sobhan Sangi"
+    "employeeName": "SOBHAN SANGI"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Lokesh Kumar"
+    "employeeName": "LOKESH KUMAR"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Sandeep Kumar Gajula"
+    "employeeName": "SANDEEP KUMAR GAJULA"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Subhan"
+    "employeeName": "SUBHAN"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Sai Kalyan Kanithi"
+    "employeeName": "SAI KALYAN KANITHI"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Pradeep"
+    "employeeName": "PRADEEP"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Ashok"
+    "employeeName": "ASHOK"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Jagadish"
+    "employeeName": "JAGADISH"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Neeraj Kumar A"
+    "employeeName": "NEERAJ KUMAR A"
   },
   {
     "location": "Hyderabad WS",
     "leadName": "Rakesh & Roop Kumar ( Star Relationship Manger )",
     "teamName": "Service Advisors",
-    "employeeName": "Deepika"
+    "employeeName": "DEEPIKA"
+  },
+  {
+    "location": "Hyderabad WS",
+    "leadName": "Urwashi( GM Customer Experience)",
+    "teamName": "Telecaller",
+    "employeeName": "SHAIK FARHEEN"
   },
   {
     "location": "360 Team",
@@ -378,6 +390,12 @@ const teamData = [
     "employeeName": "⁠TANVEER"
   },
   {
+    "location": "Pune WS",
+    "leadName": "Arijith Ghosh (Team Lead)",
+    "teamName": "Telecaller",
+    "employeeName": "SUJATA PATE"
+  },
+  {
     "location": "Nashik SR",
     "leadName": "Shubam Babar ( Team Lead )",
     "teamName": "Sales Consultants",
@@ -521,5 +539,5 @@ const teamData = [
     "teamName": "Service Advisors",
     "employeeName": "BHAVANI SHANKAR"
   }
-];
+]
 module.exports = teamData
