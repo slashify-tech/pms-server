@@ -35,7 +35,7 @@ exports.authCheck = async (req, res, next) => {
     });
   } catch (err) {
     console.log("Auth Error", err);
-    res.status(500).json({ message: "Internal Server Error", error });
+    res.status(500).json({ message: "Internal Server Error", err});
   }
 };
 
