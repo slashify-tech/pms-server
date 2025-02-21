@@ -10,8 +10,8 @@ const {
 const { authCheck } = require('../middleware/Auth');
 
 router.patch("/document-status-update", authCheck, updateDocumentStatus);
-router.patch("/customer-document-approval", sendPolicyPdf); 
-router.patch("/customer-approval", authCheck, CustomerApproval); 
+router.patch("/customer-document-approval",authCheck,  sendPolicyPdf); 
+router.patch("/customer-approval", CustomerApproval); 
 
 router.get("/all-document", authCheck, getDocumentData);
 router.get("/agent-document-approval", authCheck, getStatusRequestForAgent);
