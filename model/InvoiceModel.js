@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const customerBillingSchema = mongoose.Schema({
+  customerName:{
+    type: 'string',
+  },
   description: {
     type: String,
   },
@@ -61,6 +64,9 @@ const customerBillingSchema = mongoose.Schema({
 
 });
 const billingDetailSchema = mongoose.Schema({
+  customerName:{
+    type: 'string',
+  },
   address: {
     type: String,
   },
@@ -94,6 +100,7 @@ const billingDetailSchema = mongoose.Schema({
 });
 
 const vehicleDetailSchema = mongoose.Schema({
+  
   vehnumber: {
     type: String,
   },
