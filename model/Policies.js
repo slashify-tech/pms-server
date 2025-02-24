@@ -34,7 +34,7 @@ const policySchema = mongoose.Schema(
     },
 
     customerName: { type: String, required: false },
-    panNumber:{type: String, required: true},
+    panNumber:{type: String, required: false},
     address: { type: String, required: false },
     email: { type: String, required: false },
     contactNumber: { type: String, required: false },
