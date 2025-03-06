@@ -658,16 +658,46 @@ exports.getCancelledPolicyCount = async (req, res) => {
 
 exports.getAllPolicyCount = async (req, res) => {
   try {
-    const count = await Policy.countDocuments({
-      isDisabled: { $ne: true },
-      policyStatus: { $nin: ["yetToApproved", "rejected"] },
+    const todayUTC = new Date();
+    const todayISTEnd = new Date(todayUTC.getTime());
+    todayISTEnd.setHours(23, 59, 59, 999);
+    const todayFormatted = todayISTEnd.toISOString().split('T')[0];
+
+    const count = await Policy.aggregate([
+      {
+        $match: {
+          isDisabled: { $ne: true },
+          policyStatus: { $nin: ["yetToApproved", "rejected"] },
+          $expr: {
+            $gte: [
+              {
+                $dateFromString: {
+                  dateString: "$extWarrantyEndDate",
+                  format: "%d-%m-%Y",
+                },
+              },
+              new Date(todayFormatted),
+            ],
+          },
+        },
+      },
+      {
+        $count: "activePolicyCount",
+      },
+    ]);
+
+    const activePolicyCount = count[0]?.activePolicyCount || 0;
+
+    res.status(200).json({
+      message: "Active Policy count",
+      count: activePolicyCount,
     });
-    res.status(200).json({ message: "Active Policy count", count });
   } catch (err) {
     console.error("Error while counting policies:", err);
     res.status(500).json({ message: "Something went wrong", error: err });
   }
 };
+
 
 exports.downloadPolicyCsv = async (req, res) => {
   try {
