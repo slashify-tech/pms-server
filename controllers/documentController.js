@@ -20,6 +20,7 @@ exports.getDocumentData = async (req, res) => {
     const skip = (page - 1) * limit;
     const parsedLimit = parseInt(limit, 10);
 
+    // Search condition
     const searchCondition = searchTerm
       ? {
           $or: [
@@ -28,12 +29,13 @@ exports.getDocumentData = async (req, res) => {
             },
             { policyId: { $regex: searchTerm, $options: "i" } },
             { customerName: { $regex: searchTerm, $options: "i" } },
+            { vehicleIdNumber: { $regex: searchTerm, $options: "i" } }, // Using vehicleIdNumber for search
           ],
         }
       : {};
 
+    // Fetch common data
     const commonData = await Policy.aggregate([
-      // Match policies where policyStatus is approved
       {
         $match: {
           policyStatus: "approved",
@@ -42,18 +44,25 @@ exports.getDocumentData = async (req, res) => {
       {
         $lookup: {
           from: "invoices",
-          localField: "email",
-          foreignField: "email",
+          let: { policyVIN: "$vehicleIdNumber" }, 
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$vehicleDetails.vinnumber", "$$policyVIN"],
+                },
+              },
+            },
+          ],
           as: "invoiceDetails",
         },
       },
       {
         $unwind: {
           path: "$invoiceDetails",
-          preserveNullAndEmptyArrays: false, // Exclude policies without invoice details
+          preserveNullAndEmptyArrays: false, // Exclude policies without matching invoices
         },
       },
-      // Match invoices where invoiceStatus is approved
       {
         $match: {
           "invoiceDetails.invoicestatus": "approved",
@@ -70,7 +79,7 @@ exports.getDocumentData = async (req, res) => {
       {
         $unwind: {
           path: "$documentStatus",
-          preserveNullAndEmptyArrays: true, // Include policies without a documentStatus
+          preserveNullAndEmptyArrays: true,
         },
       },
       {
@@ -80,12 +89,14 @@ exports.getDocumentData = async (req, res) => {
       {
         $project: {
           commonEmail: "$email",
+          vehicleIdNumber: "$vehicleIdNumber",
           customerName: "$customerName",
           agentId: "$userId",
           policyId: "$policyId",
           policyDbId: "$_id",
           invoiceId: "$invoiceDetails.invoiceId",
           invoiceDbId: "$invoiceDetails._id",
+          vehicleDetails: "$invoiceDetails.vehicleDetails", // Include vehicle details
           documentStatus: {
             agentApproval: "$documentStatus.agentApproval",
             clientApproval: "$documentStatus.clientApproval",
@@ -114,8 +125,16 @@ exports.getDocumentData = async (req, res) => {
       {
         $lookup: {
           from: "invoices",
-          localField: "email",
-          foreignField: "email",
+          let: { policyVIN: "$vehicleIdNumber" }, // Lookup using vehicleIdNumber
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$vehicleDetails.vinnumber", "$$policyVIN"],
+                },
+              },
+            },
+          ],
           as: "invoiceDetails",
         },
       },
@@ -144,7 +163,6 @@ exports.getDocumentData = async (req, res) => {
       return res.status(404).json({ message: "No document found" });
     }
 
-    // Return response
     return res.status(200).json({
       message: "Data fetched successfully",
       commonData,
