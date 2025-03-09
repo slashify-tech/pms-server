@@ -333,7 +333,7 @@ exports.getStatusRequestForAgent = async (req, res) => {
 };
 
 exports.sendPolicyPdf = async (req, res) => {
-  const { invoiceId, policyId, customerName, clientApproval, email } = req.body;
+  const { invoiceId, policyId, customerName, clientApproval, email, agentId } = req.body;
   try {
     let documentStatus = await DocumentStatus.findOne({ invoiceId, policyId });
 
@@ -351,7 +351,9 @@ exports.sendPolicyPdf = async (req, res) => {
     if (customerName) {
       documentStatus.customerName = customerName;
     }
-
+    if (agentId) {
+      documentStatus.userId = agentId;
+    }
     if (email) {
       documentStatus.email = email;
     }
