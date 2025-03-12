@@ -52,11 +52,13 @@ exports.topPerformerLists = async (req, res) => {
     startMonth,
     endMonth,
     year,
+    endYear,
   } = req.query;
 
   try {
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const selectedYear = year ? parseInt(year) : new Date().getFullYear();
+    const selectedEndYear = endYear ? parseInt(endYear) : null;
     const matchConditions = {
       policyType: "MB",
       isDisabled: false,
@@ -74,41 +76,29 @@ exports.topPerformerLists = async (req, res) => {
     if (teamName) {
       matchConditions["teams.teamName"] = teamName;
     }
-
-    if (startMonth && endMonth) {
-      const startMonthIndex = monthMapping[startMonth];
-      const endMonthIndex = monthMapping[endMonth];
-
-      if (startMonthIndex !== undefined && endMonthIndex !== undefined) {
-        if (startMonthIndex === endMonthIndex) {
-          // Case when both months are the same
-          matchConditions.createdAt = {
-            $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
-            $lte: new Date(`${selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`),
-          };
-        } else {
-          matchConditions.createdAt = {
-            $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
-            $lte: new Date(`${selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`),
-          };
+    let startDate = new Date(`${selectedYear}-01-01T00:00:00.000Z`);
+    let endDate = selectedEndYear
+      ? new Date(`${selectedEndYear}-12-31T23:59:59.999Z`)
+      : new Date(`${selectedYear}-12-31T23:59:59.999Z`);
+      if (startMonth && endMonth) {
+        const startMonthIndex = monthMapping[startMonth];
+        const endMonthIndex = monthMapping[endMonth];
+  
+        if (startMonthIndex !== undefined && endMonthIndex !== undefined) {
+          startDate = new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`);
+          endDate = new Date(`${selectedEndYear || selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`);
+        }
+      } else if (startMonth) {
+        const startMonthIndex = monthMapping[startMonth];
+        if (startMonthIndex !== undefined) {
+          startDate = new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`);
+        }
+      } else if (endMonth) {
+        const endMonthIndex = monthMapping[endMonth];
+        if (endMonthIndex !== undefined) {
+          endDate = new Date(`${selectedEndYear || selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`);
         }
       }
-    } else if (startMonth) {
-      const startMonthIndex = monthMapping[startMonth];
-      if (startMonthIndex !== undefined) {
-        matchConditions.createdAt = {
-          $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
-        };
-      }
-    } else if (endMonth) {
-      const endMonthIndex = monthMapping[endMonth];
-      if (endMonthIndex !== undefined) {
-        matchConditions.createdAt = {
-          $lte: new Date(`${selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`),
-        };
-      }
-    }
-
     const pipeline = [
       { $match: matchConditions },
       { $unwind: "$teams" },
@@ -173,7 +163,6 @@ exports.topPerformerLists = async (req, res) => {
     });
   }
 };
-
 
 
 exports.downloadTopPerformerCsv = async (req, res) => {
