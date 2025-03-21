@@ -333,7 +333,7 @@ exports.getStatusRequestForAgent = async (req, res) => {
 };
 
 exports.sendPolicyPdf = async (req, res) => {
-  const { invoiceId, policyId, customerName, clientApproval, email, agentId } = req.body;
+  const { invoiceId, policyId, customerName, clientApproval, email, agentId, vinNumber } = req.body;
   try {
     let documentStatus = await DocumentStatus.findOne({ invoiceId, policyId });
 
@@ -359,8 +359,8 @@ exports.sendPolicyPdf = async (req, res) => {
     }
     await documentStatus.save();
 
-    const policy = await Policy.findOne({ email });
-    const invoice = await Invoice.findOne({ email });
+  const policy = await Policy.findOne({ "vehicleIdNumber" : vinNumber });
+    const invoice = await Invoice.findOne({ "vehicleDetails.vinnumber" : vinNumber });
     if (!policy && !invoice) {
       return res
         .status(404)
