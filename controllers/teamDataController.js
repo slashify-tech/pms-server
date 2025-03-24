@@ -200,7 +200,7 @@ exports.topLeadLists = async (req, res) => {
     };
 
     if (search) {
-      matchConditions["teams.employeeName"] = { $regex: search, $options: "i" };
+      matchConditions["teams.leadName"] = { $regex: search, $options: "i" };
     }
 
     if (location) {
