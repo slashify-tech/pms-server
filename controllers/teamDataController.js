@@ -174,7 +174,6 @@ exports.topPerformerLists = async (req, res) => {
 
 
 
-
 exports.topLeadLists = async (req, res) => {
   const {
     page = 1,
@@ -192,11 +191,15 @@ exports.topLeadLists = async (req, res) => {
   try {
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const selectedYear = year ? parseInt(year) : new Date().getFullYear();
-    const selectedEndYear = endYear ? parseInt(endYear) : null;
+    const selectedEndYear = endYear ? parseInt(endYear) : selectedYear;
     const matchConditions = {
       policyType: "MB",
       isDisabled: false,
       policyStatus: { $in: ["approved"] },
+      createdAt: {
+        $gte: new Date(`${selectedYear}-01-01T00:00:00.000Z`),
+        $lte: new Date(`${selectedEndYear}-12-31T23:59:59.999Z`)
+      }
     };
 
     if (search) {
@@ -211,96 +214,84 @@ exports.topLeadLists = async (req, res) => {
       matchConditions["teams.teamName"] = teamName;
     }
     if (leadRole) {
-      const roleRegex = new RegExp(`\\(\\s*${leadRole}\\s*\\)$`, "i"); // Matches role inside parentheses
+      const roleRegex = new RegExp(`\\(\\s*${leadRole}\\s*\\)$`, "i");
       matchConditions["teams.leadName"] = { $regex: roleRegex };
     }
-    
-    let startDate = new Date(`${selectedYear}-01-01T00:00:00.000Z`);
-    let endDate = selectedEndYear
-      ? new Date(`${selectedEndYear}-12-31T23:59:59.999Z`)
-      : new Date(`${selectedYear}-12-31T23:59:59.999Z`);
-      if (startMonth && endMonth) {
-        const startMonthIndex = monthMapping[startMonth];
-        const endMonthIndex = monthMapping[endMonth];
-  
-        if (startMonthIndex !== undefined && endMonthIndex !== undefined) {
-          startDate = new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`);
-          endDate = new Date(`${selectedEndYear || selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`);
-        }
-      } else if (startMonth) {
-        const startMonthIndex = monthMapping[startMonth];
-        if (startMonthIndex !== undefined) {
-          startDate = new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`);
-        }
-      } else if (endMonth) {
-        const endMonthIndex = monthMapping[endMonth];
-        if (endMonthIndex !== undefined) {
-          endDate = new Date(`${selectedEndYear || selectedYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`);
-        }
-      }
-      const pipeline = [
-        { $match: matchConditions },
-        { $unwind: "$teams" },
-        {
-          $group: {
-            _id: "$teams.leadName",
-            location: {$first: "$teams.location" },
-            teamName: {$first: "$teams.teamName"},
-            employees: { $addToSet: "$teams.employeeName" },
-            totalPolicies: { $sum: 1 },
-            totalAmount: { $sum: "$totalPrice" },
-            
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            leadName: "$_id",
-            teamName: 1,
-            location: 1,
-            employees: 1,
-            totalPolicies: 1,
-            totalAmount: 1,
-          },
-        },
-        { $sort: { totalPolicies: -1 } },
-        { $skip: skip },
-        { $limit: parseInt(limit) },
-      ];
-  
-      const data = await Policy.aggregate(pipeline);
+    if (startMonth || endMonth) {
+      const startMonthIndex = startMonth ? monthMapping[startMonth] : 0;
+      const endMonthIndex = endMonth ? monthMapping[endMonth] : 11;
       
-      const totalCountPipeline = [
-        { $match: matchConditions },
-        { $unwind: "$teams" },
-        {
-          $group: {
-            _id: "$teams.leadName",
-          },
-        },
-        { $count: "totalCount" },
-      ];
-  
-      const totalCountResult = await Policy.aggregate(totalCountPipeline);
-      const totalCount = totalCountResult[0]?.totalCount || 0;
-  
-      return res.status(200).json({
-        message: "Data fetched successfully",
-        data,
-        pagination: {
-          currentPage: parseInt(page),
-          totalPages: Math.ceil(totalCount / limit),
-          totalItems: totalCount,
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching top lead lists:", error);
-      return res.status(500).json({
-        message: "Something went wrong",
-        error: error.message,
-      });
+      if (startMonthIndex !== undefined && endMonthIndex !== undefined) {
+        matchConditions.createdAt = {
+          $gte: new Date(`${selectedYear}-${(startMonthIndex + 1).toString().padStart(2, '0')}-01T00:00:00.000Z`),
+          $lte: new Date(`${selectedEndYear}-${(endMonthIndex + 1).toString().padStart(2, '0')}-31T23:59:59.999Z`)
+        };
+      }
     }
-  };
+   
+    
+    const pipeline = [
+      { $match: matchConditions },
+      { $unwind: "$teams" },
+      {
+        $group: {
+          _id: "$teams.leadName",
+          location: { $first: "$teams.location" },
+          teamName: { $first: "$teams.teamName" },
+          employees: { $addToSet: "$teams.employeeName" },
+          totalPolicies: { $sum: 1 },
+          totalAmount: { $sum: "$totalPrice" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          leadName: "$_id",
+          teamName: 1,
+          location: 1,
+          employees: 1,
+          totalPolicies: 1,
+          totalAmount: 1,
+        },
+      },
+      { $sort: { totalPolicies: -1 } },
+      { $skip: skip },
+      { $limit: parseInt(limit) },
+    ];
+
+    const data = await Policy.aggregate(pipeline);
+    
+    const totalCountPipeline = [
+      { $match: matchConditions },
+      { $unwind: "$teams" },
+      {
+        $group: {
+          _id: "$teams.leadName",
+        },
+      },
+      { $count: "totalCount" },
+    ];
+
+    const totalCountResult = await Policy.aggregate(totalCountPipeline);
+    const totalCount = totalCountResult[0]?.totalCount || 0;
+
+    return res.status(200).json({
+      message: "Data fetched successfully",
+      data,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalCount / limit),
+        totalItems: totalCount,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching top lead lists:", error);
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
   
 
 exports.downloadTopPerformerCsv = async (req, res) => {
